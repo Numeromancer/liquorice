@@ -1,0 +1,50 @@
+---------------------------------------
+README File For Liquorice Documentation
+---------------------------------------
+
+This file describes the other documents found with it:
+
+	README
+		This document
+		
+	RELEASE-NOTES
+		Specific notes regarding this release of software.
+	
+	architecture/
+		Descriptions of the Liquorice system architecture and
+		its various library components.
+
+	change-log.txt
+		Complete change history since the first snapshot.
+				
+	coding.txt
+		Liquorice coding rules.
+	
+	copying-free.txt
+		License for files that are "free"
+		
+	copying-gpl.txt
+		A copy of the GNU General Public License.
+
+	licensing.txt
+		An explanation of the licensing of Liquorice.
+		
+	schematics/
+		Directory containing schematics for using ISA bus
+		devices with an STK300 ATMega103 AVR evaluation board.
+		
+	skeleton-gpl.c
+		Skeleton source file with GPL license header.
+
+	skeleton-liquorice.c
+		Skeleton source file with GPL and Liquorice special
+		exception license header.
+
+	ten-rules.txt
+		Henry Spencer's 10 commandments for C programmers.
+
+	to-do.txt
+		Things that still need to be done.
+
+	why-liquorice.txt
+		Why Liquorice was started and how it got its name.

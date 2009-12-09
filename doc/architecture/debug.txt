@@ -1,0 +1,21 @@
+-----------------
+debug (20000904a)
+-----------------
+
+The debug library is intended for use in diagnosing problems within the
+Liquorice system and reporting them via a dedicated debug channel (e.g. text
+-matrix LCD and push-button).
+
+
+--------------------
+Library dependencies
+--------------------
+
+None.
+	
+
+-------
+Details
+-------
+
+None currently available.

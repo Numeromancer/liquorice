@@ -1,0 +1,34 @@
+-------------------
+condvar (20000905a)
+-------------------
+
+The condvar library provides condition variables.  These may be used to
+synchronize access to various system resources.
+
+
+--------------------
+Library dependencies
+--------------------
+
+debug
+context
+	
+
+-------
+Details
+-------
+
+Condition variables (also known as condvars) provide a basic resource
+management queueing mechanism.  The basic principle of a condvar is that it
+allows a context to check for some condition and then go to sleep if the
+condition isn't met.  Another context may make a change that affects the
+conditional check and wake the sleeper.  In order to ensure consistency of data
+both contexts use the same lock to protect the condition, with the sleeper
+relinquishing the lock as it goes to sleep and awaking holding it once more.
+
+There is one additional element to the Liquorice implementation of condvars; a
+context sleeping whilst waiting for a condition to change can be interrupted
+by another context.  Typically this would be done to provide a "time-out"
+mechanism via a software-settable timer.  By setting a timer before going to
+sleep a context can "know" that it will wake up when the timer expires if it
+isn't woken by another context.

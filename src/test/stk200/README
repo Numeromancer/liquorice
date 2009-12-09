@@ -1,0 +1,38 @@
+-------------
+Tests Details
+-------------
+
+This test program demonstrates a very simple configuration running on a small
+hardware platform (single-chip in fact).  It initializes the heap, threading
+system (which implicitly creates the idle thread) and then launches 2 test
+threads which alternate displaying messages on the debug LCD.
+
+Probably a better demonstration here would be to only use the context library
+rather than the thread library, and not launch the idle thread.  This would
+make more space to have perhaps 4 test threads running.  The test does however
+show Liquorice working on a very small setup.
+
+
+------------------
+Supported Hardware
+------------------
+
+The software expects to run on a standard STK200 evaluation board from Kanda
+Systems fitted with an AT90S8515.  It does not need any external RAM or the
+address latch, however it does expect to use a standard 16x2 LCD (attached to
+the LCD expansion header) at 0x8000 and 0xc000.
+
+
+-----------------
+Building The Code
+-----------------
+
+The code has been built and tested under Linux using avr-gcc v2.95.2 and a
+fairly standard set of GNU utilities.  I don't believe there's anything too
+obscure in any of it.  I haven't switched any of the assembly code to Denis'
+new convention where "r15" would simply become "15" - I don't know if my code
+breaks when this happens, but I'd be interested in any feedback.
+
+To build the code, ensure that the "at90s8515" libraries have been built and
+intalled in the "lib" directory, modify the Makefile in this directory as
+necessary, and run "make".

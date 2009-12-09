@@ -1,0 +1,27 @@
+------------------------------------
+Project Directory Layout (20000829a)
+------------------------------------
+
+This file aims to explain the layout of the project directories:
+
+doc/
+	Documentation related to all of the project.
+	
+include/
+	Header files for the various libraries.
+	
+lib/
+	Library files for the system, servers and misc support code.
+	
+src/
+	All source code goes here!
+
+	host/
+		Host-specific utilities.
+
+	lib/
+		Library sources.
+
+	test/
+		Test programs for checking various aspects of the
+		system's behaviour.

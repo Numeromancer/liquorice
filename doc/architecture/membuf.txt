@@ -1,0 +1,50 @@
+------------------
+membuf (20000920a)
+------------------
+
+Membufs provide a reference-counting garbage-collected memory management
+facility.  These can be used for passing a memory block between
+contexts/threads without having to be concerned about which thread will have
+to release it back to the heap.
+
+
+--------------------
+Library dependencies
+--------------------
+
+debug
+context
+heap
+	
+
+-------
+Details
+-------
+
+Membufs are a variation on heap management.  A membuf provides the same
+facilities as a heap block (and indeed are allocated from the heap), but adds
+some additional (invisible) information to the allocated block.  The additional
+information contains a reference-count of how many places the contents of the
+block are referenced from (usually via pointers).  In addition, functions are
+provided to increase and decrease the reference count reference count.  When
+the reference count reaches zero the membuf is automatically freed back to the
+heap manager.
+
+The advantage of membufs is that they allow data to be referenced from several
+locations without having to worry about which of the referers will free it's
+memory back to the heap when they have finished with the contents.  A good
+example is to consider a producer/consumer problem:
+
+The producer creates a membuf, and holds a reference to it.  It then passes the
+membuf to a consumer which then also references it (now have a ref-count of 2).
+The producer then dereferences the membuf (it no longer needs it) and at some
+time the consumer also dereferences the membuf.  Now as we have concurrency
+within Liquorice, the consumer may dereference the membuf before or after the
+producer so we don't know which one will be the last to use the memory.  The
+reference counting system ensures that the last one to reference the membuf
+also tidies up after it.
+
+As a general guide, it's pretty much completely safe to do anything with a
+membuf that has a reference count of 1.  If it's any greater than 1, however
+then any modifications have to be done very carefully to ensure that there
+aren't any race conditions.

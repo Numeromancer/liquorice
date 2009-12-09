@@ -1,0 +1,22 @@
+[CAM Processor Job]
+Section=default
+
+[default]
+Name=""
+Prompt=""
+Device="PS"
+Wheel=""
+Rack=""
+Scale=1.000000
+Output="/home/dave/liquorice/devel/sch/liq001.ps"
+Flags="0 0 0 1 0 1 1"
+Emulate="0 0 0"
+Offset="0.250000 -0.250000"
+Sheet=1
+Annulus="-1000.000000 20.000000"
+Thermal="20.000000 10.000000 20.000000"
+Mask="10.000000 0.000000 0.000000"
+Tolerance="0.000000 0.000000 0.000000 0.000000 0.000000 0.000000"
+Pen="0.000000 0.000000"
+Page="11.000000 7.750000"
+Layers=" 91 92 94 95 96 101"

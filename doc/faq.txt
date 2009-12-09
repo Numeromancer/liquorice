@@ -1,0 +1,52 @@
+--------------------------------------
+Frequently Asked Questions (20000923a)
+--------------------------------------
+
+This FAQ is aimed at providing answers to questions that I've been asked, or
+think I might be asked regarding Liquorice and its development.  It's not a
+definitive statement however, so if you have any questions or would like more
+clarification about anything in here please send an email to the
+liquorice-devel mailing list.
+
+FWIW the questions are not in any particular order, simply the order that
+they've been asked and answered.
+
+Please note that at some time in the future some of these Qs & As will probably
+be altered or removed as other parts of the system are developed.  Some of the
+questions that were originally included have already been changed.
+
+Also note that this FAQ does not cover things that are included in the other
+document files that accompany this distribution.
+
+
+Q1) Why doesn't the IP networking use a Berkeley sockets interface?
+
+A1) Liquorice's networking code is designed in a fairly fundamentally different
+way to most IP stacks.  Most systems rely on a "task" polling information out
+of the network code, which has to buffer the information until it is requested.
+Liquorice's IP stack uses a dataflow architecture where data is pushed up the
+protocol layers immediately packet data has been received.  The data does not
+get buffered unless one of the layers makes a policy decision to do so.
+Generally data will be pushed all the way to the end-application level.
+
+In a small system this design reduces memory requirements, eliminates expensive
+queueing and threading operations, and exposes more of the system internals to
+the application level.  This latter feature makes it easy for an application
+service, say, to implement connection management policies (e.g. it becomes
+possible to decide which TCP connections to accept).
+
+Finally, if the Berkeley interface does become a necessity then it wouldn't be
+too hard to write an emulation layer to support it.
+
+
+Q2) What other 8 bit platforms, apart from AVRs, will be able to support
+Liquorice?
+
+A2) Liquorice should be pretty portable to many 8 bit micros, but in practice
+some are better candidates than others.  Generally the code will only be really
+viable where there is good support for call and parameter stacks being kept in
+the main system RAM.  In addition, having several pointer registers that can
+address the system RAM would be a very good idea.
+
+This generally means that something like a Z80 would probably be reasonably
+easy to support, whilst a standard 8051 would be pretty much impossible.

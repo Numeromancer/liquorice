@@ -1,0 +1,43 @@
+----------------
+heap (20000904a)
+----------------
+
+The heap library provides managed access to the global memory heap.  In
+particular it allows for the safe allocation and subsequent release of blocks
+of memory from the heap.
+
+
+--------------------
+Library dependencies
+--------------------
+
+debug
+context
+	
+
+-------
+Details
+-------
+
+Dynamic (run-time) memory allocations are made from the heap.  The heap is a
+global resource containing all of the free memory in the system.  The heap
+is hanlded as linked list of unused blocks of memory (the so called free-list).
+
+Any context that wishes to allocate memory does so by requesting a block of a
+specific size.  The heap manager looks for the smallest block that will meet
+the requirement and releases it to the requester.  If the block being
+requested is usefully smaller than the smallest free block then the block from
+which the request is being met is split in two.  The unused portion is put
+back into the free-list.
+
+When a context no longer needs a block of memory it frees it back to the heap.
+The heap manager looks to see if the block of memory that has been released
+adjoins any other free regions; if it does then the adjacent free regions are
+joined together to form one larger region.
+
+The policies implemented by the heap manager are intended to keep the free-list
+as unfragmented as possible.  There might be faster ways to handle the heap,
+but this strategy is intended to ensure that more useful allocations can be
+made (i.e. we end up with relatively few large free blocks rather than lots of
+small ones).
+

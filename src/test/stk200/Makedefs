@@ -1,0 +1,46 @@
+#
+# Path for the root directory of this Liquorice installation.
+#
+
+LIQDIR = /home/dave/liquorice/devel
+
+#
+# These are the various hardware platforms currently supported.  Uncomment the
+# one that you want to use.
+#
+
+ARCHDIR = avr
+CPUDIR = avr/at90s8515
+MASFLAGS = -mmcu=at90s8515
+MCCFLAGS = -mmcu=at90s8515
+TARGET_PREF = avr-
+
+MDEFS = -DAT90S8515 -DSTK200
+
+#
+# Compilation details.
+#
+
+AS = $(TARGET_PREF)as
+ASFLAGS = $(MASFLAGS)
+AR = $(TARGET_PREF)ar
+ARFLAGS = rsv
+CC = $(TARGET_PREF)gcc
+CCFLAGS = $(MCCFLAGS) -fno-builtin -O3 -Wall $(DEFS)
+CPP = $(CC) -E $(DEFS)
+CPPFLAGS = -traditional $(DEFS)
+DEFS = $(MDEFS) -I$(LIQDIR)/include
+LD = $(TARGET_PREF)ld
+LDFLAGS = -mavr85xx
+NM = $(TARGET_PREF)nm
+OBJCOPY = $(TARGET_PREF)objcopy
+STRIP = $(TARGET_PREF)strip
+
+#
+# Miscellaneous support commands.
+#
+
+CP = cp -av
+INSTALL = install -D
+MAKE = make
+RM = rm -f

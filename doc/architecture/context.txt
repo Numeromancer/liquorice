@@ -1,0 +1,63 @@
+-------------------
+context (20000916a)
+-------------------
+
+The context library provides the core multi-tasking and task synchronization
+mechanisms of the Liquorice system.
+
+
+--------------------
+Library dependencies
+--------------------
+
+debug
+	
+
+-------
+Details
+-------
+
+Liquorice's contexts are the core of the system.  Each context has a number of
+characteristics that determine how and when it should be allowed to run.
+
+The system works on the principle that the most urgent context always runs.
+The only exception to this is if a CPU interrupt arrives and the interrupt has
+not been disabled.  For more notes about interrupts, see below.  Each context
+has a priority which is used to determine how urgent it is.  This priority
+ranges from 0 to 255, with the lowest value indicating the most urgent.
+
+Whenever a context that is more urgent than the current one is made ready to
+run the system will switch to it (a context switch).  A context will execute
+indefinitely unless either a more urgent one becomes runnable or unless it goes
+to sleep.  If two contexts with the same priority are both scheduled to run,
+the first must complete before the second starts.  In order to allow timeslice
+-based scheduling policies, it is possible to make a context yield, where in
+effect it releases the CPU and is rescheduled; If another context of the same
+priority was waiting then it will now run instead because it has been ready for
+longer.
+
+Contexts have a number of possible operating states.  The interesting states
+are: running (obvious really), runnable (ready to run) or sleeping (neither
+running or ready to run).
+
+The context library also supports spin-locks.  These allow a critical resource,
+typically a data structure shared between one or more contexts, to be accessed
+in a consistent way such that no two contexts can access it at the same time.
+Spin-locks (known as such because a context trying to obtain one in a
+multiprocessor system will spin around busy-waiting for it to become available)
+are the building block of all of the mutual exclusion mechanisms.
+
+Within Liquorice, spin-locks have a priority associated with them.  When a
+context acquires a lock it has its priority boosted to the the lock's priority
+level.  When it relinquishes the lock its priority is restored.  The priority
+boosting is used to ensure that deadlocking does not occur (stops another
+context that may become runnable from trying to run and trying to take the same
+lock).
+
+Spin-locks must not be held by a context when it goes to sleep (although they
+may be held if a context is pre-empted).  If a context needs to sleep it may
+atomically (i.e. non-interruptibly) hand over the lock before going to sleep.
+When it wakes up it will atomically re-acquire the lock before continuing
+running.  The context library provides special "wait" and "signal" mechanisms
+to do perform the sleep and wakeup operations.  All other synchronization
+facilities can be built from the spin-lock, wait and signal operations.

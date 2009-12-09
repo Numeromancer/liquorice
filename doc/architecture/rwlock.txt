@@ -1,0 +1,39 @@
+------------------
+rwlock (20000906a)
+------------------
+
+The rwlock library provides a reader/writer locking mechanism.  This can be
+used to synchronize access to system resources, guaranteeing minimum latency
+to reader contexts whilst providing an atomic update capability for writer
+contexts.
+
+
+--------------------
+Library dependencies
+--------------------
+
+debug
+context
+	
+
+-------
+Details
+-------
+
+Reader/writer locks provide a basic resource management queueing mechanism.
+The basic principle of a reader/writer lock is that for as long as no contexts
+try to gain write access (a write lock) any readers will be granted immediate
+access to the resource.  As soon as write access is requested then all
+subsequent requests for read access will cause the requesting context to go to
+sleep.  Once all readers have released their read locks, the most urgent
+context waiting for write access will be woken and given the requested write
+lock.  When it releases its lock any other queued writers will be allowed given
+write access, one after another, until none are left.  At this point the
+readers will be woken again and all given read-access.
+
+There is one additional element to the Liquorice implementation of
+reader/writer locks; a context sleeping whilst waiting for a reader/writer lock
+can be interrupted by another context.  Typically this would be done to provide
+a "time-out" mechanism via a software-settable timer.  By setting a timer
+before going to sleep a context can "know" that it will wake up when the timer
+expires if it isn't woken by another context.

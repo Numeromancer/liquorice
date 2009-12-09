@@ -1,0 +1,82 @@
+----------------------
+Licensing Of Liquorice
+----------------------
+
+This document aims to explain how Liquorice is licensed and why.
+
+
+-----------------------------------------
+The Liquorice License (Executive Summary)
+-----------------------------------------
+
+Liquorice is licensed under the terms of the GNU General Public License v2,
+but with a special exception clause: linking files with Liquorice files does
+not cause the non-Liquorice files to become subject to the GPL.  The precise
+details of this are laid out in "copying-liquorice".
+
+
+----------------
+A Bit Of History
+----------------
+
+Liquorice was originally released under the GNU Lesser General Public License
+v2.1, and all releases of Liquorice prior to 18th October 2000 carry this
+license.  This had seemed a reasonable solution to allow the use of Liquorice
+in non-free embedded applications, whilst ensuring that modifications and
+improvements to Liquorice itself would remain freely available.
+
+During September 2000 it was pointed out that clause 6 of the LGPL presented a
+significant problem with respect to embedded applications where firmware was
+fuse protected.  Having thought about this, it was also evident that the
+problem was even more serious for any application that might be built into
+a one-time-programmable, mask-ROM or custom ASIC device since by their very
+nature they cannot be reprogrammed.
+
+After querying the situation with the Free Software Foundation, their
+suggestion was to adopt the license that they use for GUILE.  GUILE is licensed
+with the intention of allowing it to be used as a part of non-GPL'd
+applications whilst still remaining free itself.
+
+Having reviewed this suggestion it was decided that from 18th October 2000 all
+of the files within Liquorice that were previously licensed under the LGPL
+should be re-licensed under these terms (GPL plus exception clause).
+
+
+--------------
+Interpretation
+--------------
+
+As people tend to be somewhat wary about licensing issues it seems reasonable
+to try and provide some guidance as to what the license is intended to allow:
+
+1) You can use the code within Liquorice in exactly the same way as any other
+GPL'd software.  The GPL itself describes what this means and many informed
+opinions have been published to describe this.
+
+2) The exception clause allows you to link non-GPL'd code with the Liquorice
+code without the non-GPL'd part becoming subject to the GPL.
+
+3) Whilst linking Liquorice with non-GPL'd code does not mean that the
+non-GPL'd code takes on Liquorice's license, similarly the act of linking does
+not mean that Liquorice becomes licensed under any other terms that the
+non-GPL'd code may carry (unless suitable written consent with respect to
+Liquorice is obtained first).
+
+Generally the aim is that Liquorice may be used in any application, but that
+the part of that application that is Liquorice must remain subject to
+Liquorice's license.  Modifications and the Liquorice sources on which they
+are based must remain freely available to users of that software, etc.
+
+If a new file is created and linked with existing Liquorice files then it will
+not need to be subject to Liquorice's license unless a significant part of the
+code within that file is copied from files that carry Liquorice's license.
+Whilst "significant" is very difficult to define, a reasonable judgement would
+be that anything that involves copying a block of more than 10 statements of C
+code from a Liquorice file would tend to be significant.  Clearly though this
+is just a guideline and the copyright-holder should be consulted if you aren't
+too sure.
+
+
+
+David J. Hudson
+17th October 2000

@@ -1,0 +1,49 @@
+-------------------------------------
+Release Notes For "udptest" 20000701a
+-------------------------------------
+
+This test program simply sends a single UDP packet to a specified host and
+port.  It is intended to be used in conjunction with the standard Linux
+networking utility "tcpdump".
+
+
+---------------
+Using "udptest"
+---------------
+
+updtest takes 2 optional parameters:
+
+	-h <hostname> - host to target.
+	-p <port> - port to target.
+	
+When it's run, "udptest" sends a single UDP packet to the target host and
+port, allowing the target to respond as it wishes.
+
+Generally it is suggested that "tcpdump -vv -i<interface>" be run as root
+on another virtual terminal/console so that all of the network transactions
+can be monitored.  Note that "<interface>" will usually be something like
+"eth0" or "sl0".
+
+"tcpdump" will show all of the inbound and outbound packets, including any
+errors and ICMP messages.
+
+
+--------
+Platform
+--------
+
+"udptest" has been designed to operate under Linux v2.2 or later.  It may
+work on other platforms, however no others have been tested.  Whilst it may
+be possible to build this under Microsoft Windows (95, 98, NT, 2000, etc), its
+usefulness will be limited unless you have something equivalent to "tcpdump".
+
+
+--------------------------------
+Changes since snapshot 20000616a
+--------------------------------
+
+	* Added a message to indicate which host and port are to be sent
+	  the packet.
+	
+	* Updated this release notes file to explain how this test
+	  program might be used.

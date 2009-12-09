@@ -1,0 +1,360 @@
+------------------------------------
+To-Do List For Liquorice (20001018a)
+------------------------------------
+
+The Liquorice project started with a fairly well defined set of objectives and
+list of features to be included prior to the release of v1.  Since then there
+has been a certain element of "feature creep", but any additional facilties
+have been added to the list to make it a more useful platform or to allow more
+thorough testing of the core services.
+
+First I've listed all of the "bugs and enhancements" for code that has already
+been written or requires either full or partial rewriting.  Next I've attempted
+to note what "unimplemented features" need to be done before v1.  Third is the
+"things to think about" section for items that I'm not too sure about whether
+to attempt or not (either before or after v1).  Finally is "cute tricks", which
+is all of the ideas I've had for optimizations that might be a nice idea if the
+need ever arises.
+
+One problem of course with this list is that it can make things look rather
+incomplete - unfortunately the more I write the more I find that I'd like to
+be able to do!  Perhaps I should put the list of completed features first
+to make it look better? :-)  More seriously though I also use this file as
+to note down any deficiencies as I find them and to stop me from forgetting
+them!
+
+The lists are roughly ordered by when I'm planning to do them.  Some of the
+ordering changes on a daily basis as I discover simplifications or elements
+that need to be done in order to do something else.  Other items may also
+disappear from the lists if I realize that they don't need to be done.
+
+
+---------------------
+Bugs And Enhancements
+---------------------
+
+	* Modify the PPP implementation to support the various forms
+	  of header compression.
+	
+	* PPP NAKs should be counted and finally rejected if too many
+	  occur.
+	
+	* Implement timeout back-offs for PPP link negotiation.
+	
+	* Properly support IPCP options.
+	
+	* Almost all of the netbuf handling within the PPP code needs
+	  to be reworked to be more code/RAM efficient.
+
+	* Sort out the way in which TCP sockets are closed by
+	  application services - should ensure that the socket is
+	  zeroed when closed!
+	
+	* Build a library to support CRC calculations.  Ideally have 2
+	  or 3 different versions that use say ROM-based tables,
+	  RAM-based (run-time created) tables or straight on-the-fly
+	  calculations.  Ideally support 8, 16 and 32 bit CRCs.
+
+	* Look at supporting dynamic binding of external hardware
+	  interrupts.  There's no point doing this for internal
+	  interrupts of course!  More generally, look for ways in
+	  which interrupt actions for different CPU types can be
+	  reasonably unified.
+	
+	* Need to separate out object interfaces from the current
+	  instances of them (i.e. separate out naming, abstract out
+	  general behaviour, etc.).  In particular the UART and timer
+	  device support needs to be altered in this way.
+
+	* NS16550A UART code needs to be able to support multiple
+	  devices, and special versions need to be able to support
+	  NS16450 or NS8250 devices that don't have FIFOs.
+
+	* Add a mechanism to UART objects to allow notification to
+	  their clients that various control signals have activated.
+	  Also allow the setting of other control signals.
+	
+	* Implement an abstract timer service upon which other timer
+	  services can be built.  As an example, oneshot timers should
+	  be redesigned to use this new service.
+	
+	* Implement replacements for libgcc.a within Liquorice to
+	  avoid problems with finding appropriate library code when
+	  different systems have different versions of gcc, etc.
+	  Also allows non-standard compilation modes to be used to
+	  build the Liquorice code (e.g. -mrtd on i386).
+	  	
+	* Look for possible "base classes" for client, server and
+	  instance objects.  Might be able to save code and get better
+	  compile-time type checking?
+	
+	* Look at the way in which references are tidied up during
+	  "client detach" operations.  It may be that these can be more
+	  generally tidied up via custom "free" operations instead.
+	
+	* Consider whether servers should be able to detach clients as
+	  well as the other way around.  This would be really cool, but
+	  would add some overhead.  Need to decide this one quickly as
+	  it has profound implications for some of the code structures.
+
+	* Modify the various IP datalink layers to support dynamic
+	  configuration of address and network numbers.
+	
+	* Add a mechanism for threads to be able to make a callback
+	  when they exit.  The callee should be responsible for
+	  cleaning up the thread memory.  This will allow parents to
+	  be notified when a child stops running.
+	
+	* Rework the way in which the oneshot reference parameter is
+	  handled - it should be passed a membuf that it can ref and
+	  deref automagically :-)
+	
+	* Modify the debug support code so that it is much more
+	  effectively eliminated from non-debugging code.
+	
+	* Review the "public" interfaces in the global header files to
+	  see if they are as they should be.
+	
+	* Support a maximum IP datagram size and reject anything that's
+	  larger than this limit.  Incorporate this into a general
+	  packet filtering layer.  Should also be able to reject packets
+	  (both in and out) on the basis of address range.
+	
+	* Support IP fragmentation.  This may be a capability that gets
+	  rapidly degraded as we run out of RAM.  In particular this
+	  has the potential to cause a lot of security
+	  (denial-of-service) problems.  Perhaps this should also be
+	  built into the packet filtering layer?
+
+	* Rework the ARP cache handling.  More generally rework the
+	  ARP layering.  Needs to support more dynamic/flexible
+	  caching and support for timing-out entries.
+
+	* Add TCP window handling.  This will provide sensible flow
+	  control capabilities.  This is a rather critical omission in
+	  the view of RFCs 793 and 1122.  Look a implementing this via
+	  a "plug-in" interface that sits on top of the existing TCP
+	  implementation (so it's only implemented if required).
+	
+	* Security checking for network protocols.  Look for attacks or
+	  buggy packets and reject/log them as required.
+
+	* Cope with memory shortages when handling network traffic.
+	  This basically requires discarding packets that we're not
+	  in a position to do anything with.
+
+	* Check all memory allocations to see if they succeed!
+
+	* Sort out a method for iterating around all of the UDP and
+	  TCP client structures once they're all individually
+	  instanciated.  More generally look at how all information
+	  gathering is performed and come up with a better solution
+	  than the current hacks.
+	
+	* Sort out TCP sequence numbering (need clock algorithm and
+	  some form of randomness handling).
+
+	* Modify the NE2000 driver to do something a little more sane
+	  w.r.t. DMA acknowledges failing during transmits.
+	  	
+	* Rework the load average calculations to make them use less
+	  CPU time.
+
+	
+----------------------
+Unimplemented Features
+----------------------
+
+	* IP broadcast support.
+	
+	* IP multicast support.
+
+	* Add CHAP and PAP authentication support for PPP.
+	
+	* Implement IP options handling.
+	
+	* Proof-of-concept RS485 networking implementation using the
+	  same mechanisms as the IP stack.
+	
+	* BOOTP and/or DHCP client.
+
+	* SNTP client (to synchronize clocks).  Perhaps even NTP or
+	  something in-between the two.
+		
+	* Close TCP connections if too many retries occur
+	  (retransmission timeout mechanism required).
+
+	* PPP TCP header compression.
+	  	
+	* I2C peripheral chip device drivers.	
+
+	* Support for Dallas 1-wire/iButton devices.
+	  	  	
+	* Watchdog support.  I always try to avoid this until the last
+	  however, as if the code always works without it then it stops
+	  problems getting out into the big wide world!
+
+	* Port to the ARM (TDMI7) architectures.
+
+	* TCP keep-alives.
+	
+	* Optional periodic PPP echo requests to verify that a link is
+	  still up (LCP layer).
+	  	
+	* Add lots more thread-safe libc style functions.  In particular
+	  add a complete string library, memory buffer handler, message
+	  queueing system, random number generator and floating point
+	  maths library.
+	
+	* Add SMP capabilities - before v1.0 we're probably staying on
+	  uniprocessor systems, but some of the data structures can be
+	  put in place to make SMP easier.  Can probably also build
+	  spin-locking mechanisms, etc.
+	
+	* Look at ways of handling run-queue locking (generally context
+	  locking in fact), w.r.t. SMP implementation.
+
+	* General (i.e. not just debug) support for LCD displays.  I'd
+	  particularly like to support bitmapped graphics displays as
+	  well as character matrix - I've done this before with 8051's
+	  and it's amazing what a small micro can be made to do :-)
+
+
+---------------------
+Things To Think About
+---------------------
+
+	* Think about allowing the notification of all state changes
+	  within TCP to be passed to a client object.  Particularly
+	  useful would be to add notification of establishment, much
+	  the same way as closure is currently notified.
+
+	* Review the behaviour of netbufs.  I believe that they don't
+	  need to be reference counted any more because they use a
+	  copy-on-write behaviour, and they now flow straight to their
+	  end-point without pausing to be queued, etc.  Certainly this
+	  could reduce their cost slightly.
+	
+	* Add facility to dump (via UDP) a complete system memory image
+	  to a Linux server in the event of a critical fault being
+	  detected.  This will use fixed packet headers and no retries,
+	  but should prove invaluable in tracking down faults!
+
+	* Look at the heap management algorithm and see if can be made
+	  either faster without compromising capability.
+	  	
+	* Find or build a regression test suite for the IP stack and
+	  in particular the TCP code.  This should allow testing for
+	  RFC compliance, performance analysis and security checking.
+	  It will also help prove that the system can't be broken by
+	  accidental or deliberate bad packets, floods of packets, etc.
+	  Finally it should also help convince a would-be user that
+	  the code won't do bad things to their networks :-)
+
+	* Implement "lossy" layers for both the IP and the TCP.  These
+	  would fit between the datalink and IP layers, and the IP and
+	  TCP layers, respectively.  Each would provide a configurable
+	  packet discard rate, thus simulating networks that are
+	  incurring losses.  Very useful for testing throughput,
+	  recovery strategies, etc.
+	  	
+	* Add sensible IP routing capability (route packets from one
+	  interface to another).
+		
+	* Non-trivial HTTP server.  Probably v1.0 for now - v1.1 is a
+	  lot harder.  A trivial server is easy!
+
+	* Some form of downloadable IP packet filter language that can
+	  be used in conjunction with the IP filter layer.
+	
+	* Look at some sort of back-off strategy for discarding network
+	  packets in the event that we're running into CPU loading
+	  problems.  Perhaps reject packets at the device driver level
+	  by providing a throttling mechanism.
+	  	
+	* The UART service class ought to be changed to support FIFO
+	  buffered devices as the main choice and not be solely
+	  byte-oriented.
+
+	* IPv6 (IPng).  Perhaps Liquorice can become the world's smallest
+	  IPv6 web server :-)
+	
+	* Handle URG information on TCP.  I know that this is a required
+	  part of the TCP RFCs, but it's not necessarily relevant in an
+	  embedded environment.  Should be relatively easy to pass this
+	  information via new special methods.
+
+	* Synchronous PPP implementation.
+	
+	* Implement a module management system to allow downloadable
+	  modules for a system that can support this.
+	
+	* SNMP.  There's no point in not being ambitious is there!  The
+	  aim is to make any Liquorice "device" network manageable.
+
+	* Support sending more than one packet before ACKs on TCP.
+	  This might prove a little tight on RAM however.
+	
+	* Improved memory management diagnostics.  Leak detection, etc.
+
+	* Move each of the functions in the libraries to separate
+	  source files to ensure more sensible linking.  Particularly
+	  important when trying to support micros with a small
+	  code-space.
+
+	* Some form of "flash" or "eeprom" based file-system.
+
+	* NFS client support.  This would make it easy to use remote
+	  filesystems for data logging, etc.
+
+	* SMTP, POP3 or IMAP4 mail client (to email out status or
+	  information).
+	  	
+	* Internationalization of application code.  Support for Unicode
+	  or ISO10646 character sets.
+	
+	* Some form of "virtual machine" support to make it easier to
+	  allow "user-programming".
+	
+	* Universal plug and play.
+	
+	* Implement a VNC server capability.  I think VNC might make
+	  for a good tool to manage a remote device where status changes
+	  can be "pushed" to an administrator rather than being
+	  passively "pulled" by a web browser.
+
+	* Java support, but particularly JINI.  Might be possible to
+	  implement one of the embedded Java specs.
+	
+	* Rework the PPP state transition table code to use less
+	  memory.  It currently consumes 480 bytes for action details
+	  whilst there are only 99 actions used.
+	
+	* More lightweight versions of all of the IP protocol layers,
+	  suitable for less capable hardware (e.g. with tight memory
+	  contstraints).
+
+	
+-----------
+Cute Tricks
+-----------
+
+	* Rework the one-shot timers to only worry about the most urgent
+	  timer and disregard the others.  The tick counts are only
+	  reduced when this one's timer expires.  This saves on the
+	  arithmetic on all of the one-shots until at least one of them
+	  has expired.  As we do this arithmetic we need to scan each of
+	  them anyway to find the most urgent timer remaining.
+
+	* Look at allocating a netbuf at the same time that a packet
+	  is received.  This would save on some memory management
+	  overhead (both space and CPU time).
+	
+	* When receiving data on the SLIP link (or other RAM-buffered
+	  serial link), release any unused packet buffer space before
+	  forwarding the packet to the higher levels of the protocol
+	  stack.  This needs a tweak to the heap and membuf managers.
+
+	* Look at the reading and writing of I/O ports within the
+	  Ethernet drivers and use assembler optimizations to speed up
+	  the bulk operations.

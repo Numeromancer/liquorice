@@ -1,0 +1,62 @@
+------------------------
+They "Why" Of Liquorice!
+------------------------
+
+This is all about why Liquorice exists - Dave
+
+
+----------------
+A Bit Of History
+----------------
+
+Around the middle of March 2000 I started looking at an embedded networking
+project that was to be based around an Atmel AVR microcontroller (8-bit).  When
+I start looking though, I couldn't find a free or low-cost OS/library that
+would meet my firmware requirements (threads, TCP/IP, PPP, Ethernet, lots of
+device drivers, flash filesystems, etc.)
+
+I'd worked on a number of OS projects before, starting with Minix, the Oberon
+System, then migrating to Linux, VSTa and finally to Artemis (an i386 embedded
+microkernel based system that I wrote from scratch).  I'd also done quite a
+lot of 8 bit coding (where no OS was being used).  At about the same time I
+was failing to find an OS, I did run across the AVR port of gcc (used in Linux,
+VSTa and Artemis).  When I couldn't find anything else, and given that there
+was a zero-cost, high quality, development tool available starting something
+new seemed a fairly good idea!
+
+[As an aside, it looks at the time of writing thing (July 2000) that the 8-bit
+end of the world seems to have been forgotten by the "mainstream" of
+free-software developers.  There are bits and pieces around, but many carry
+obscure non-comercial use licenses and they're generally quite fragmented.]
+
+
+------------------------------
+Why Do Something From Scratch?
+------------------------------
+
+This question could be why not do a small Linux (ELIX say), why not port
+eCOS or why not use something like uCOS?
+
+My main objective with Liquorice was to develop a high-performance
+multi-threaded RTOS for use with high-ish performance 8 bit microcontrollers,
+but scalable so that it could be used with larger systems too.  Whilst
+something like Red Hat's (formerly Cygnus') eCOS system talked about running in
+only a few kBytes of RAM (which sounded promising), I found that it and all of
+the other interesting free OS kernels generally only supported 16 or 32 bit
+micros (and eCOS was written in C++ anyway).
+
+I also needed to get a pretty much fully compliant multi-homed TCP/IP (not
+just UDP/IP) implementation with RS232 and Ethernet connections.  This
+generally ruled out the simpler solutions (uCOS) as these didn't have the
+network support for 8-bit platforms.
+
+Besides all of this, writing OS code is fun :-)
+
+
+----------------
+What's In A Name
+----------------
+
+I couldn't think of a name for my new project when I started.  I'd drawn an
+overview of the architecture, however, and when I looked at it I realised that
+it looked like a lot of "Liquorice Allsorts" - obvious really :-)

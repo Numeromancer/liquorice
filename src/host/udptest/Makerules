@@ -1,0 +1,61 @@
+#
+# Top level rules for building the code.
+#
+
+#
+# Compilation details.
+#
+
+TARGET_PREF =
+AS = $(TARGET_PREF)as
+ASFLAGS =
+AR = $(TARGET_PREF)ar
+ARFLAGS = rsv
+CC = $(TARGET_PREF)gcc
+CCFLAGS = -O2 -march=i586 -pipe -Wall $(INCS) $(DEFS)
+CPP = $(CC) -E $(DEFS)
+CPPFLAGS = -traditional $(DEFS)
+CRT1 = /usr/lib/crti.o /usr/lib/crt1.o
+DEFS =
+INCS = -I.
+LD = $(TARGET_PREF)ld
+LDFLAGS =
+NM = $(TARGET_PREF)nm
+STRIP = $(TARGET_PREF)strip
+
+#
+# Miscellaneous support commands.
+#
+
+CP = cp -av
+MAKE = make
+RM = rm -f
+
+#
+# General rules.
+#
+
+.c.o:
+	$(CC) $(CCFLAGS) -c -o $*.o $<
+
+.c.s:
+	$(CC) $(CCFLAGS) -c -S -o $*.s $<
+
+.S.o:
+	$(CC) $(CPPFLAGS) -c -o $*.o $<
+
+.S.s:
+	$(CPP) $(CPPFLAGS) -E -o $*.s $<
+
+.s.o:
+	$(AS) $(ASFLAGS) -o $*.o $<
+
+all:
+
+clean:
+	find -name "*.[oas]" -print -exec $(RM) \{\} \;
+
+depend:
+	for i in $(SUBDIRS); do $(MAKE) -C $$i depend; done
+
+dummy:

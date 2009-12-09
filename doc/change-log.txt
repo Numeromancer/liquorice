@@ -1,0 +1,692 @@
+------------------
+Snapshot 20001018a
+------------------
+
+	* Allow TCP services to reject connections as well as accepting
+	  them.
+	
+	* Fixed a couple of problems in the SMC91C96 Ethernet driver.
+	
+	* Started to implement PPP (point-to-point protocol) support.
+	  Initially this is limited to purely asynchronous channels,
+	  bound to UARTs.
+
+	* Fixed a minor bug in the (idle) thread code for freeing up
+	  space after a thread exits.
+	
+	* Reworked some of the debug handling to make all of the debug
+	  related code disappear if a non-debug version is built.
+	
+	* Realized that I need to protect downcalls as much as upcalls
+	  (between client and server objects) so added reference count
+	  protection.
+	
+	* Modified the TCP behaviour to use the PSH flag when sending
+	  data segments.  This ensures that Windows NT will not decide
+	  to wait up to 20 seconds (measured in a real application)
+	  before delivering data to an application.
+
+	* Changed the software license from LGPL to GPL with an
+	  exception clause to allow linking with non-GPL'd code.
+
+------------------
+Snapshot 20000927a
+------------------
+	
+	* Modified the i386 bootstrapping code to switch away from
+	  as86/ld86 and instead use ".code16" support under GNU as/ld.
+	  This reduces the number of tools required to build the code.
+	
+	* Moved the membuf support into the common library area.  Found
+	  and fixed some incorrect function calls in the netbuf code.
+
+	* Wrote a (somewhat crude) NS16550A UART driver for the i386
+	  port.
+	  	
+	* Ported the IP networking stack to the i386.  Found a minor
+	  problem with the context library sleep code whilst doing this
+	  and fixed it.  Also found and fixed a bug in the "protocol
+	  not available reporting".
+	
+	* Found that the i386 port didn't enable the A20 gate line
+	  at initialization causing aparently random crashes when
+	  accessing memory about 1 MByte - fixed this, and also enabled
+	  NMIs for detecting memory problems (parity or ECC if used).
+	
+	* Found a general problem in all of the Ethernet packet drivers
+	  where a failed receive could crash the i386 or do random
+	  strange things with the AVR.  Fixed it - simple code
+	  re-ordering!
+	
+	* Completely overhauled the NE2000 driver - it was missing a
+	  lot of things that were essential if it was to be used on
+	  busy networks :-(  For now though, the new version is only
+	  available for the i386 until I can test it with an AVR.
+
+	* Fixed a problem with the TCP implementation that would cause
+	  it to block - this was a throwback to an earlier design that
+	  assumed that all segments were sent from a different thread
+	  to the device driver's receive thread.
+	
+	* Tidied up some of the makefiles to get them to build targets
+	  correctly first time.
+	
+	* Continued to move general network services into the shared
+	  support libraries rather than containing them within the
+	  test-specific frameworks.
+	
+	* Added an Intel EtherExpress Pro/10+ Ethernet driver to the
+	  i386 port.
+	
+------------------
+Snapshot 20000919a
+------------------
+	
+	* Went through all of the dynamically bound upcalls and ensured
+	  that they protect the called object by refing and derefing.
+
+	* Modified the "stack blown" checks to allow a variable guard
+	  -band to be specified instead of being fixed at 0x20.
+	
+	* Implemented an initial i386 port.  Found and resolved several
+	  more porting bugs in the original code.  Also tracked down an
+	  instance of NULL pointer dereferencing and fixed it.
+	
+	* Added a copy of the GPL to the copyright documentation to
+	  cover some GPL-derived code that is used in the i386 build
+	  tools.  Note: none of this code is linked with a running
+	  Liquorice environment so it has no impact on the use of the
+	  software in commercial systems (it's equivalent to using GCC
+	  to compile the code).
+	
+	* Reworked the way in which contexts are initialized.  Moved
+	  the functionality into the context library rather than being
+	  part of the "entry.S" files.  Makes context startup quicker,
+	  and potentially consumes less space.
+	
+	* Fixed the problem with freeing memory back to the heap when
+	  a thread exits.
+	
+	* Minor tweak to use "noreturn" attributes on certain functions
+	  such as "context_exit()".
+	
+	* Simplified the initialization of the idle thread so that it
+	  is now picked up from the same memory that is initially used
+	  for the stack.  More specifically also made this area of RAM
+	  dynamically selected at run-time.
+	
+	* Modified the test2 thread within the ATMega103 test framework
+	  to operate synchronously rather than via a thread.  This
+	  saves both time and code space.
+
+------------------
+Snapshot 20000908a
+------------------
+
+	* Fixed a small memory leak in the ICMP client support code.
+	
+	* Simplified little bits of the code - common fragments moved
+	  to inlined functions, etc.
+	
+	* Fixed a problem with ARP responses - I suspect I broke this
+	  when I modularized the code.
+	
+	* Went around all of the interrupt code and tidied up the use
+	  of interrupt disabling and enabling.
+
+	* Split out the core "context" details from the thread
+	  implementation.  This provides the basic multiple contexts
+	  -with-priority concept without requiring unecessary kernel
+	  abstractions (e.g. heap management, policy-based scheduling).
+
+	* Fixed a problem with reference counting and one-shot callback
+	  functions checking within the TCP code.  This was stopping
+	  retransmissions from working.
+
+	* Realized that I was running the timer ticks the wrong way,
+	  and that CT0 counts up, not down (the clock was running too
+	  fast).
+
+	* Modified all of the code that previously protected data
+	  structures with "isr mutexing" to use explicit locks.  The
+	  code will compile down to the same level of efficiency when
+	  built in its optimized form, but has better debugging
+	  characteristics otherwise.  It also starts to make it safe
+	  for SMP use.
+	
+	* Eliminated all "sleep" and "wakeup" primitives in favour of
+	  a basic set of context-related functions.  Quite a
+	  simplification as all of the others our now built from the
+	  new code.
+
+	* Re-engineered the project directory structures to make it
+	  easier to support micros other than the ATMega103, and to
+	  support multiple application or test programs.  Implemented
+	  support for the AT90S8515 as a proof-of-concept.
+	
+	* Added a new counting-semaphore library.  This is a proof-of
+	  -concept for the basic sleeping primitives and shows how to
+	  use them in ways that differ from condition variables.
+
+	* Added a new reader/writer lock library.
+	
+	* Minor simplification in register window selection in the
+	  3c509 driver.
+
+	* Reworked some of the "class" handling in the network code.
+	  Eliminated some of the previous pointer arithmetic in order
+	  to use less space and get better speed.
+
+	* Modified some of the Ethernet-support objects to avoid having
+	  to reference MAC addresses directly, and instead use a method
+	  interface.  This allows additional layers to be added to the
+	  software in the future (e.g. packet filters).
+	
+	* Tidied up a mistake in the TCP socket initialization.
+	
+	* Completely reworked the concept behind TCP passive (listening)
+	  socket handling.  The result is smaller, faster and less
+	  prone to queueing problems - definitely not a BSD sockets
+	  interface anymore though!
+	
+	* Radically reworked the TCP service test examples to use the
+	  new socket API - eliminated the per-service threads as they're
+	  not required any more (big saving)!
+	
+	* Reworked the heap initialization code to make it easy for an
+	  application to specify the location of heap RAM regions.
+	  Found and fixed a bug in heap_free() at the same time!
+	
+	* Renamed the spinlock functions to avoid any possible confusion
+	  with other types of lock exist or may be developed.
+
+
+------------------
+Snapshot 20000827a
+------------------
+
+	* Reworked the handling of netbufs to make the different
+	  protocol layers use membufs instead of heap allocations.
+	
+	* Modified the retransmission handling in the TCP to clone the
+	  netbuf that will be resent rather than relying on internal
+	  reference counting.  This allows quite a significant
+	  simplification in other parts of the code.
+	
+	* Simplified the internals of membufs - I'd made a flawed
+	  assumption about how internal references needed to be handled.
+	
+	* Removed some (now) unecessary netbuf locking (it was always
+	  a bit of a hack at best).
+	
+	* Eliminated the "arp.c" and "arp.h" files as they're not as
+	  generally useful as I'd first thought they would be.
+	
+	* Reworked the main source "Makefile" to build the majority of
+	  the code as a library and then link it, rather than just
+	  linking the individual source files.  This ensures that any
+	  unused library code (built from unreferenced source files) is
+	  not linked (makes the ELF file smaller).
+
+	* Simplified the IP stack by removing the IP receive queue
+	  management thread.  This wasted space and slowed thing down.
+	  It was originally provided to serve a purpose that is now
+	  handled with better lock priority handling.
+
+	* Fixed a race condition in the TCP delayed ACK handling.  I
+	  don't think I've seen it happen, but there was a small chance
+	  that it would occur.
+	  	
+	* Reworked a lot of previously static inter-module binding in
+	  favour of dynamic binding (sounds trivial doesn't it :-)).
+
+	* Fixed a bug in the ARP response handling.  The code used to
+	  respond with its own details to any ARP request :-(
+	
+	* Merged the ICMP and IP code together as they're effectively
+	  part of the same protocol layer (they are sublayers of layer
+	  3 in fact).
+	
+	* Modified the notification of ICMP error messages to the
+	  appropriate transport layer in accordance with RFC1122.  Also
+	  ensured that only valid ICMP request types may be hooked by a
+	  client.
+	
+	* Introduced the NE2000 Ethernet driver into the file set.
+	
+	* Provided the "ethdev" abstraction for ethernet device
+	  drivers.
+
+	* Added abstractions for the IP datalink layer and for the IP
+	  to Ethernet layer.
+	
+	* Simplified inter-module calling to avoid any redundant
+	  parameters.
+
+	* Eliminated all of the conditional compilation from the IP
+	  layer w.r.t datalink layers (e.g. Ethernet MAC addresses).
+
+	* Extracted IP checksumming into a separate file.
+
+	* TCP MSS is now reported to a remote host based on the TCP's
+	  IP's instance's MRU.
+
+	* Now allocate a thread's stack at the same time as its data
+	  structure.  Saves on heap overhead and is a bit quicker.
+
+	* Changed the behaviour of the TCP to only send a SYN response
+	  when the server application performs its "accept" call.  This
+	  allows the server to pass new client reference information to
+	  the TCP and thus allows it to avoid any race conditions where
+	  a client host could send data before the server was ready to
+	  deal with it.
+
+
+------------------
+Snapshot 20000814a
+------------------
+
+	* Added a new concept, membufs, to the code.  These provide a
+	  reference-counted block memory allocation/garbage-collection
+	  mechanism.  Converted netbufs and tcp_sockets to use membufs
+	  instead of their own reference-counting code.
+	
+	* Reworked all of the code that uses indirection to functions
+	  via a structure to allocate the structures as membufs.
+
+	* Added an early-out mechanism in the free-list search performed
+	  in malloc() when an exact match is found for a requested
+	  block of memory.
+
+	* Renamed the malloc(), free(), etc, functions to heap_alloc(),
+	  heap_free(), etc.  This is more consistent with other names
+	  within the software.  It also allows me to separate out
+	  different heaps at some stage in the future for performance
+	  reasons (e.g. to use the fast internal RAM in the ATMega103).
+
+	* Overhauled the internals of the timer handling.  Modified it
+	  to make all timers one-shots since this simplifies the code
+	  and makes it faster and reliable.  Timers also now pass a
+	  parameter during callbacks.  Also fixed several logic bugs
+	  that would cause unreliability.
+	
+	* Reworked a lot of the internals of the TCP implementation to
+	  use high-resolution timers instead of one 10 Hz timer.
+	
+	* Reworked some of the TCP function APIs to get better
+	  consistency.
+	
+	* Found and resolved a lot of TCP timer-related race conditions.
+
+	* Modified the handling of the "debug interrupt signal".  Now
+	  uses a special-purpose ISR on interrupt 2 (port D pin 2)
+	  instead of polling port D pin 4 during the timer ISR.
+	
+	* Modified timer handling so that the timer ISR will track
+	  multiple timer ticks in the event that the timer thread is
+	  not able to run.  Ensures more accurate wall-clock timing!
+	
+	* Renamed a lot of functions to make the names more
+	  consistent.
+	
+	* Added lock counting mechanism and checks to look for threads
+	  trying to sleep whilst holding locks.
+
+	* Removed "timer_set()" and "timer_reset()" and the logic for
+	  per-thread timer handling.  Replaced this with some specific
+	  functions to support interrupting sleeping threads.  The
+	  same effect can now be achieved via one-shot timers and a
+	  callback function, but with less overhead.
+	  	
+	* Reworked test5 and test6 so that they runs multi-threaded and
+	  can serve more than one client simultaneously.
+	
+	* Removed "thread_fork()".  It was unecessary and very complex.
+	  It was also completely (and irreparably) broken when gcc
+	  decided to use a stack frame in any function that called it!
+
+	* Fixed a "thinko" in the scheduling code.  Only the ISR can
+	  meaningfully look at the "current thread" to see if it's
+	  timeslice has expired.  The timer thread is the "current
+	  thread" when it is running - doh!
+	
+	* Separated timer functions (hardware functions and one-shots)
+	  into independent source files.
+	
+	* Started writing an FAQ.  It's now included in the "doc"
+	  directory as "faq.txt".
+
+
+------------------
+Snapshot 20000808a
+------------------
+	
+	* Improved the support for timers (also trying to make the code a
+	  little less AVR-specific).
+	
+	* Implemented the Karn/Partridge and Van Jacobson round-trip-time
+	  calculations for TCP (required by RFC1122).
+	
+	* Reworked thread and lock priorities to try and improve
+	  performance.  Also removed a couple of redundant checks from
+	  the lock handling code.
+	
+	* Improved the instrumentation of the kernel, adding counts of
+	  the number of context switches performed by each thread.
+	
+	* Added TCP options support (only processes RFC793 options for
+	  now though and ignores all others).
+	
+	* Implemented delivery of ICMP destination unreachable messages
+	  to the IP and TCP layers.
+	
+	* Reworked the AVR UART handling to add a small (8 byte) software
+	  FIFO to the receive character ISR.  This stops the occasional
+	  data loss that was previously being seen under heavy loads.
+
+
+------------------
+Snapshot 20000803a
+------------------
+
+	* Removed common socket close code sequences from the TCP receive
+	  state machine and put them into callable functions.  Saved quite
+	  a lot of code space with this.
+	
+	* Correctly handle requests from remote hosts with half-open
+	  (half-closed?) connections after a system restart (send a RST).
+
+	* Modified the handling of TCP timers to implement exponential
+	  back-off.
+
+        * Implemented delayed ACKs for established TCP connections.
+          This means that ACK packets are sent after a short delay, but
+          if another packet is sent before the delay expires then the
+          original ACK is not sent and instead the new packet does both
+          it's own work and that of the ACK packet.  This is a *very*
+          big saving in terms of comms work!
+
+        * Added support for CLOSING state (oops!) in the TCP packet
+          receive handler.
+          	
+	* Reworked the UART and SLIP handlers to make them simpler and
+	  faster.
+	  	  	
+	* Added a lot more strxxx() functions - inlined assembly language
+	  implementations.
+
+	* IP packet ident fields are now generated correctly.
+	
+	* Reworked the ISR thread handling to ensure that when an ISR
+	  thread sleeps it does so with an atomic exchange of a lock (as
+	  is already done for condvars).  This prevents priority
+	  inversions.  Fixed a priority inversion in the SLIP and IP
+	  code by doing so.
+
+	* Added new debug service (telnet-style service) that allows the
+	  inspection of threads, TCP sockets, UDP sockets and the memory
+	  (heap) free-list.
+	
+	* Re-enabled use of on-chip memory as part of the general heap
+	  and fixed a couple of bugs associated with that.
+
+	* Fixed a problem with the thread timers that could cause the
+	  run-queue to become corrupted.
+	
+	* Added support for CLOSE-WAIT state in the TCP packet receive
+	  handler to cope with deferred FIN sending (whilst we wait
+	  for the remote host to ACK our previous packet).
+
+	* Fixed a whole series of memory leaks in the TCP code.
+	
+	* Reworked the reference count handling in the netbufs (to help
+	  sort out memory leaks).  Also lock protected ref ops on them
+	  after some subtle problems were spotted!
+	
+	* Reworked this file again - some silly mistakes had crept in
+	  at earlier versions of it and other parts were looking either
+	  dated or simply wrong in light of how things have developed.
+
+
+------------------
+Snapshot 20000720a
+------------------
+
+	* Separated out STK300 eval board support from the configuration
+	  that I normally (DJH) use.  Now easy to build either variant.
+
+	* Fixed a problem with "default" routes in the IP code.
+	
+	* Reworked the handling of netbuf transmission throughout all of
+	  the network code.  Restored the entire IP stack to "zero-copy"
+	  state.
+	
+	* Updated the test threads to provide better examples and fix
+	  a couple of bugs.
+	
+	* Started to simplify the TCP implementation (make it smaller).
+	  Also fixed a lot of silly quirks that whilst not really bugs
+	  did sometimes cause peculiar retransmissions from remote
+	  systems (Win NT in particular).
+	
+	* Fixed a problem with "malloc()" where a block of 1 byte would
+	  lead to the free-list becoming corrupted when it was freed.
+
+	* Fixed problems with IP, ICMP, UDP and TCP structure chaining.
+	  Detaching a chained element didn't work for anything but the
+	  first entry in the list (cut and paste - argghh!!)
+	
+	* Added a "memfree()" function that reports the amount of heap
+	  space that is currently available.  Useful for looking for
+	  memory leaks.
+	
+	* Added "test5" thread - this is a (somewhat trivial) web
+	  server!
+
+
+------------------
+Snapshot 20000716a
+------------------
+
+	* Completely reworked the handling of UDP and TCP sockets.
+
+	* Much better support for TCP.  Active and passive connections
+	  are now supported (client and server), and there is something
+	  of an API emerging.  Also handles the packet receive state
+	  machine more completely and in a far more RFC793-compliant
+	  manner (so the right things now happen).
+
+	* Corrected more problems with odd-sized IP packets (my previous
+	  fixes weren't as good as they needed to be).
+
+	* Added interrupt handler for "adapter failure" condition on
+	  the 3C509.
+	
+	* Fixed race conditions in the 3C509 and SMC91C96 interrupt
+	  management threads.
+	  	
+	* Made significant progress on separating some of the architecture
+	  -specific code out from the generic stuff.  Removed a lot of
+	  unecessary header file #include's at the same time.  Also
+	  ensured that the license terms for files that map I/O are now
+	  completely free rather than LGPL (to make commercial use
+	  easier).
+	
+	* Started to write some documentation!  Much of what used to be
+	  in this file has now been moved into "architecture.txt" and
+	  "to-do.txt".  A lot of new stuff has been written too.
+	
+	* Added a new test thread that acts as a TCP client.
+	
+
+------------------
+Snapshot 20000711a
+------------------
+
+	* Reworked the use of "netbuf" structures to replace the
+	  alloc/free concept with alloc and reference counted garbage
+	  collection instead.  Makes it easier to remain sane whilst
+	  working on network code.
+
+	* Initial implementation of TCP for listening sockets only.
+	  This is really work in progress more than anything that is
+	  supposed to be particularly useable.  Please regard it
+	  as a bit of a hack for now as it will (necessarily) change
+	  quite a lot over the next month.
+
+	* Test thread/service for new TCP code.
+
+	* Corrected problems with odd-sized IP packets.
+	
+	* Fixed a problem where checksums would not be calculated
+	  correctly because part of the UDP pseudo-header was not
+	  available in time.
+
+	* Added the ability to chain callback functions to the main
+	  timer tick thread (for use with TCP timers, etc).
+
+
+------------------
+Snapshot 20000705a
+------------------
+
+	* Completely reworked the handling of locks and thread priorities
+	  to make them more uniform and simpler to use.  This may cost a
+	  few CPU cycles in some instances, but saves code space and
+	  keeps things sane.
+
+	* Allowed condition variables to be interrupted by timer
+	  timeouts.  This allows possibilities of having timed access
+	  to shared resources, etc.
+
+	* Added function "thread_wait()" to suspend a thread until it is
+	  "interrupted".
+
+	* Added per-thread timer setting function (and a reset) that
+	  will wake-up (interrupt) the same thread if it is sleeping when
+	  the timer expires.
+
+	* Reworked all of the diagnostic "lights" handling to send a
+	  checkpointing pattern to PORTB (the STK300's LEDs' port)
+	  every time interrupts are disabled.  This makes it easier to
+	  track down any lock-ups, as well as improving consistency.
+
+	* Added the block I/O instruction to the bit-banged I2C interface.
+	
+	* Minor tweak to the 3C509 driver initialization.
+	
+	* Fixed a bug that would cause the UART transmitter to stop
+	  talking under some circumstance.
+
+	* Removed a pair of unused memory-speed handling functions.  The
+	  concept behind them was flawed anyway!
+	  	
+	* Debug stack tracing now allows far more depth to be traced (now
+	  supports a useful level).
+
+	* Added some stack sanity checks to look for blown (overrun)
+	  stacks during ISRs.  Found that several stacks were either
+	  getting blown or were close and so enlarged them to be safe.
+	
+	* Reworked thread creation functions to make things simpler.
+	
+	* Made the first step in source-code restructuring.
+
+
+------------------
+Snapshot 20000702a
+------------------
+
+	* Updated the "udptest" test program.
+	
+	* Added the ability to chain ICMP message handlers - i.e. to get
+	  responses to specific ICMP messages that may be issued by
+	  user-threads.
+
+	* Added the ability to chain UDP sockets handlers - i.e. to have
+	  UDP messages to specific ports handled via call-backs.
+
+	* Added the ability to chain IP protocol handlers - i.e. to have
+	  certain IP protocols handled via call-backs.
+	  	
+	* Added ICMP error message handling for "unreachable port" and
+	  "unreachable protocol".
+
+	* tcp.c removed as is wasn't doing anything.  The correct ICMP
+	  error message is now issued instead (unreachable protocol).
+	
+	* main.c now contains a couple of test threads.  These are not
+	  run by default, however they do provide examples of how to
+	  implement support for other elements of the system.
+
+	* Added check for over-long packets before they are sent in the
+	  3C509 driver.
+
+
+------------------
+Snapshot 20000629a
+------------------
+
+	* Reworked the ARP code.  The new implementation allows the
+	  Liquorice system to request MAC information for other hosts on
+	  the network as well as responding to ARP requests from other
+	  hosts.
+	
+	* Significantly improved the routing of IP packets.  Added the
+	  facility to handle routes to hosts and networks, including
+	  support for specific gateway hosts that should be used (although
+	  this bit isn't tested yet).
+
+	* Added preliminary support for I2C bus master operation.  The
+	  driver exists and works, however there are no device drivers
+	  for the any I2C slave devices.
+
+
+------------------
+Snapshot 20000626a
+------------------
+
+	* Added a driver for the SMC 91C96 Ethernet chip.  This appears to
+	  be a very well behaved memory-mapped device :-)
+	
+        * Minor tweaks to the IP checksumming code to allow it to be more
+          effectively used when performing partial checksums.
+	  	  	
+	* Added the first level of support for proper routing of IP packets.
+
+
+------------------
+Snapshot 20000621a
+------------------
+
+	* Removed one of the threads used in the 3c509B driver.  It wasn't
+	  doing anything useful except using cycles and wasting RAM!
+
+	* Fixed a memory leak in the SLIP code.
+	
+	* Reworked the lock, debug and malloc code to allow debug or
+	  configuration options to be set (within the respective header
+	  files).  Allows the code to be leaner and faster, but without
+	  the mess caused by lots of #ifdefs.  Also allows the possibility
+	  of enabling/disabling checks at run-time.
+	
+	* Separated out ISRs from general condition variables to allow
+	  them to run faster (they don't use general queueing for example).
+	  Generally reworked and improved the ISR behaviour.
+	
+	* Fixed a subtle, but serious problem with thread priority demotion.
+	
+	* Improved the layering of network code.
+	
+	* Improved some of the commenting.
+
+	* More debug code available.
+		  	
+	* Lots of minor bug fixes.
+
+
+------------------
+Snapshot 20000616a
+------------------
+
+	* First released snapshot.

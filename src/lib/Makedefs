@@ -1,0 +1,67 @@
+#
+# Path for the root directory of this Liquorice installation.
+#
+
+LIQDIR = /home/dave/liquorice/devel
+
+#
+# These are the various library builds currently supported.  Uncomment the one
+# that you want to use.
+#
+
+#ARCHDIR = avr
+#CPUDIR = at90s8515
+#MASFLAGS = -mmcu=at90s8515
+#MCCFLAGS = -mmcu=at90s8515
+#MDEFS = -DAT90S8515
+#TARGET_PREF = avr-
+
+ARCHDIR = avr
+CPUDIR = atmega103
+MASFLAGS = -mmcu=atmega103
+MCCFLAGS = -mmcu=atmega103
+MDEFS = -DATMEGA103
+TARGET_PREF = avr-
+
+#ARCHDIR = i386
+#CPUDIR =
+#MASFLAGS =
+#MCCFLAGS = -m386
+#MDEFS = -DI386
+#TARGET_PREF =
+
+#
+# Directory path for libraries that are built
+#
+
+ifdef CPUDIR
+LIBDIR = $(LIQDIR)/lib/$(ARCHDIR)/$(CPUDIR)
+else
+LIBDIR = $(LIQDIR)/lib/$(ARCHDIR)
+endif
+
+#
+# Compilation details.
+#
+
+AS = $(TARGET_PREF)as
+ASFLAGS = $(MASFLAGS)
+AR = $(TARGET_PREF)ar
+ARFLAGS = rsv
+CC = $(TARGET_PREF)gcc
+CCFLAGS = $(MCCFLAGS) -fno-builtin -O3 -Wall $(DEFS)
+CPP = $(CC) -E $(DEFS)
+CPPFLAGS = $(DEFS)
+DEFS = $(MDEFS) -I$(LIQDIR)/include
+NM = $(TARGET_PREF)nm
+OBJCOPY = $(TARGET_PREF)objcopy
+STRIP = $(TARGET_PREF)strip
+
+#
+# Miscellaneous support commands.
+#
+
+CP = cp -av
+INSTALL = install -D
+MAKE = make
+RM = rm -f

@@ -1,0 +1,49 @@
+#
+# Path for the root directory of this Liquorice installation.
+#
+
+LIQDIR = /home/dave/liquorice/devel
+
+#
+# These are the various hardware platforms currently supported.  Uncomment the
+# one that you want to use.
+#
+
+ARCHDIR = i386
+CPUDIR = i386
+MASFLAGS =
+MCCFLAGS = -m386
+TARGET_PREF =
+
+#MDEFS = -DI386 -DDJHPC -Isrv
+MDEFS = -DI386 -DDJHNE -Isrv
+#MDEFS = -DI386 -DDJHEEP -Isrv
+#MDEFS = -DI386 -Isrv
+
+#
+# Compilation details.
+#
+
+AS = $(TARGET_PREF)as
+ASFLAGS = $(MASFLAGS)
+AR = $(TARGET_PREF)ar
+ARFLAGS = rsv
+CC = $(TARGET_PREF)gcc
+CCFLAGS = $(MCCFLAGS) -fno-builtin -O3 -Wall $(DEFS)
+CPP = $(CC) -E $(DEFS)
+CPPFLAGS = -traditional $(DEFS)
+DEFS = $(MDEFS) -I$(LIQDIR)/include
+LD = $(TARGET_PREF)ld
+LDFLAGS = -Tliquorice.lds
+NM = $(TARGET_PREF)nm
+OBJCOPY = $(TARGET_PREF)objcopy
+STRIP = $(TARGET_PREF)strip
+
+#
+# Miscellaneous support commands.
+#
+
+CP = cp -av
+INSTALL = install -D
+MAKE = make
+RM = rm -f

@@ -1,0 +1,33 @@
+---------------
+sem (20000905a)
+---------------
+
+The sem library provides counting semaphores.  These can be used to synchronize
+access to system resources, in particular only allowing a fixed number of
+contexts (one or more) to gain access to the resource at any one time.
+
+
+--------------------
+Library dependencies
+--------------------
+
+debug
+context
+	
+
+-------
+Details
+-------
+
+Counting semaphores provide a basic resource management queueing mechanism.
+The basic principle of a counting semaphore is that it allows a fixed number
+of contexts (one or more) to access a resource, but that any attempt by other
+contexts will cause them to go to sleep until one of the ones that currently
+has access to the resource relinquishes it.
+
+There is one additional element to the Liquorice implementation of counting
+semaphores; a context sleeping whilst waiting for a semaphore can be
+interrupted by another context.  Typically this would be done to provide a
+"time-out" mechanism via a software-settable timer.  By setting a timer before
+going to sleep a context can "know" that it will wake up when the timer expires
+if it isn't woken by another context.

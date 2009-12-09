@@ -1,0 +1,218 @@
+----------------------------------
+Liquorice Architecture (20000905a)
+----------------------------------
+
+This document briefly describes the systems architecture of the Liquorice
+project.  In part it also explains the philosophy behind the system.  It is
+intended as a description of how things should work, rather than necessarily
+being a 100% accurate statement of how they do!  If in doubt, please consult
+the file "to-do.txt" as this will indicate any code that I know should be
+changed.
+
+This isn't really a tutorial on embedded software and I've assumed that the
+reader is reasonably familiar with CPU operation, interrupt management,
+software development, etc.  I have tried to avoid assuming too much, but if you
+do find that things are not clear then please let me know and I'll try to
+improve things (I'm an engineer not a technical author :-)).
+
+Along with this file you should also have found a number of other files that
+describe the characteristics of specific library modules.  These additional
+documents contain the specific details about what each library does and I've
+tried to avoid duplication here.
+
+Finally, please don't consider this document to be complete yet - making
+something available seemed to be more useful than not (also the general idea
+behind the releasing of the snapshots of the software).  As with the software,
+if you would like to add anything to this document, please let me know (all
+contributions gratefully received)!
+
+
+			Dave Hudson
+			dave@humbug.demon.co.uk
+			davejh@users.sourceforge.net
+
+
+--------
+Overview
+--------
+
+Liquorice is a small(ish) RTOS aimed at anywhere from medium performance (or
+better) 8-bit CPUs through 16-bit and 32-bit to 64-bit systems.  It is also
+intended to be able to take advantage of SMP (symmetric multiproceesing)
+platforms that are sometimes used in large embedded applications.  Generally it
+is aimed at systems that have a reasonably large hardware resource, where its
+management of that resource significantly assists a developer who is using it.
+At the moment it's probably reasonable to assume that a "reasonably large
+hardware resource" is say:
+
+	* RAM size >= 0.5 kBytes
+
+	* ROM size >= 8 kBytes
+
+	* CPU speed >= 1 MIP
+
+
+Several of the components in the standard release of Liquorice need quite a
+lot more than these values (e.g. TCP/IP networking support), however the core
+services should be able to run at these levels.
+
+
+-----------------
+General Structure
+-----------------
+
+The Liquorice system comprises a number of small libraries, each of which is
+designed to do only one type of thing.  Whilst it would have been possible to
+build the system from a single library, this solution makes it easy to replace
+any of them with new ones that might have different implementations.  Typical
+reasons for wanting to perform substitutions would be performance or feature
+changes.
+
+An example of a performance related substitution would be to replace a C-coded
+context library with an assembly-coded one if the C compiler was not producing
+ideal code (context is used by virtually every other library and so would be a
+good case).
+
+An example of a feature related substitution would be say the TCP library,
+where here we might replace a very simple implementation aimed at low bandwidth
+networks supported by an 8-bit CPU with a much more complex version aimed at
+high bandwidth networks on a 32-bit system (the 8-bit case is effectively
+optimized for size whilst the 32-bit case is built for performance).
+
+A key feature of the substitutions is that any replacement library exports
+the same interface as the original thus making the change tranparent.
+
+
+-------------
+Multi-tasking
+-------------
+	
+Typically Liquorice is at its most useful where there are several "concurrent"
+tasks that need to be undertaken (at the same time).  An example of this might
+be a control system that supports network operations such as fault reporting,
+status reporting and parameter changing.
+
+As a general point, the terms "tasks" and "threads" are often pretty much
+interchangeable when discussing simple (usually 8-bit) embedded systems.  As
+Liquorice is a single-address-space OS (SASOS) and does not support multiple
+"virtual machines" I have tried to be precise here, and generally refer to
+threads or contexts (a context is not a general concept but refers to a
+specific feature of Liquorice, from which threads are built).  Another term
+that is sometimes used is "process", however this generally involves a separate
+address space (virtual machine) for each one and Liquorice doesn't do this.
+Just to add to the confusion, however, someone (at Sun I think) also came up
+with "lightweight process", which means thread!
+
+	* A "thread" is a sequence of executing software that can be
+	  considered to be logically independent from other software
+	  that is being run by the same CPU.
+
+	* By implication if more than one thread can be multiplexed
+	  onto the same CPU then the software is said to be
+	  "multi-threaded".
+
+
+Most CPUs exploit this concept, albeit for a less general purpose.  Interrupt
+service routines the main example: In response to an interrupt the CPU stops
+executing one set of code and starts running the ISR.  In some cases it will
+also switch call and/or parameter stacks at the same time.  When implemented
+as a software concept, threads provide the ability for an OS to switch between
+different threads giving the appearance that the CPU is able to do several
+things at once.
+
+Liquorice implements "heavyweight" or "pre-emptive" threads; that is, Liquorice
+will stop one thread from executing and run another more urgent thread if
+required.  Other systems often use "lightweight" or "co-operative" threads,
+where a thread will only stop executing when it decides to.  CPU interrupts
+are of the "heavyweight" variety.
+
+As noted earlier, threads in Liquorice are actually built from an even simpler
+concept, "contexts".  A context is essentially a thread as described earlier,
+however it does not have some of the information used by the thread management
+system to control such things as scheduling policies.  From an object
+-orientation perspective we can consider that threads are sub-classed from
+contexts.
+
+As the threads within the system all share the same address space and hardware
+resources it is important to stop them from causing each other problems.  This
+is particularly an issue where two or more threads need to share a resource
+(perhaps a memory location or some peripheral device).  To prevent this,
+Liquorice uses mutual exclusion techniques (mutexes), sometimes also known as
+synchronization mechanisms.  With our CPU interrupt model again, software can
+protect itself from being interrupted by temporarily disabling interrupts
+(either globally stopping all of them or just one particular interrupt).
+
+
+----------
+Interrupts
+----------
+
+Liquorice is intended to be used in embedded applications and this sometimes
+places constraints on interrupt management that are not necessarily true of
+more general-purpose operating systems used on PCs, workstations or servers.
+
+The problem we have is that we don't want some relatively time-consuming
+interrupt service routine to suspend the activities of an urgent thread.  In
+some general-purpose operating systems this is a particular problem, however
+as CPU speeds and hardware designs have improved this has become ignored
+because it occurs less often.  An example of a system with this problem was
+Microsoft Windows 3.11; it used to have problems on some 386 and 486 systems
+which only had 16450 UARTs (with no receive FIFO).  If a hard-drive transfer
+was in progress, interrupts were disabled - unfortunately 2 or more successive
+bytes could be received by the UART during this time and the serial link would
+become unreliable.
+
+The approach taken here, generally, is to "reflect" interrupts out of interrupt
+service routines and make them wake specific interrupt service threads.  These
+threads are scheduled in the same way as other threads and are therefore
+subject to the same scheduling rules.  The CPU-invoked interrupt service
+routines are kept as short as possible.
+
+An example of where this has been used is with the UART driver and the 3C509
+Ethernet driver on an Atmel ATMega103 running at 4 MHz.  The AVR does not have
+a receive FIFO on the UART and at 9600 baud, consecutive bytes arrive roughly
+every 1 ms.  A full-size (1518 byte) Ethernet packet takes nearer 4 ms to
+read-back from the 3C509 so the problem is fairly clear (we can lose 4 bytes
+from the UART).  Liquorice places the UART interrupt thread at a higher
+priority than the Ethernet interrupt thread, thus allowing the UART receive
+thread to interrupt the Ethernet receive.  The benefit is greater than this
+however since it is also possible for another thread (say not even related to a
+device driver) to run at an intermediate priority (between the two).  This
+thread gets to stop the Ethernet receive (as it is more urgent), whilst still
+letting the UART code run.
+
+
+----------------
+Layered Services
+----------------
+
+Liquorice uses its thread and mutex faciltities to provide a set of hardware
+device drivers.  These provide a standard mechanism by which threads can
+interact with the various hardware devices attached to the CPU.  These simplify
+the task of using the devices by hiding most of their complexity behind an
+application programming interface (API).
+
+Whilst the device drivers provide the first level of services within the
+system, other services are also provided.  These are often built on top of the
+device drivers and provide some more abstract capability.  An example of this
+is the TCP/IP network stack and SLIP driver.  Here the TCP service is built on
+top of the IP service.  The IP service uses the services of the SLIP service
+and the SLIP service relies on the facilities of the UART device driver.
+
+A key characteristic is that services (and device drivers; henceforth sometimes
+known as device services) are built to support a specific public API.  The use
+of a consistent inter-service interface allows services to be replaced by
+others that provide the same sort of capabilities, but in a different way.
+Consider two examples:
+
+In the first case, we can replace one Ethernet device service with another that
+has a completely different hardware implementation.  To all of the services
+that use the Ethernet service, the differences are hidden and only common,
+abstracted features, are visible.
+
+In the second example, we can replace a solid-state memory with a service that
+provides access to a remote (networked) disk, or perhaps even a file on a
+remote disk.  In this instance, a file system service that uses this service
+will not have to be aware of where it will actually be storing its files, so
+the one file-system service can now utilize many different types of storage
+media!

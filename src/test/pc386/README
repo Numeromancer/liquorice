@@ -1,0 +1,71 @@
+-------------
+Tests Details
+-------------
+
+This test configuration is designed to exercise the IP networking software in
+conjunction with an i386 CPU.  It includes a number of test service threads,
+each of which can be "bound" to any suitable transport layer instance, and thus
+to any IP interface.  Simply change the initialization parameters passed to
+each one.
+
+Here's a quick summary of the test services (test 1 and 4 are not enabled by
+default - their thread initialization is currently commented out):
+
+	* Test 3 provides an "echo" service on port 1235 of its bound
+	  interface.  After 10 data segments have arrived the thread
+	  will close the connection.  To try it out do something like:
+
+		telnet <addr> 1235
+	
+	* Test 4 acts as a TCP client.  It will attempt to connect to
+	  port 7 (echo service) of 192.168.0.205 when it starts and
+	  will then write 10 segments to the port once it is connected.
+	  The echo server will send them back and these will be
+	  displayed on the debug display.  This test is a good one for
+	  proving that retransmissions, etc, work correctly - pull the
+	  network cable out mid-transmission to see this happen.  When
+	  10 segments have been sent the client will close the
+	  connection.
+
+	* Test 5 is a multi-threaded web server on port 80 of its
+	  bound interface.
+
+	* Test 6 is a multi-threaded debug service on port 1237 of its
+	  bound interface.  Please ensure that your telnet
+	  implementation is put into character mode rather than line
+	  mode if you're running under Linux (Windows 95 and NT 4.0 do
+	  this by default):
+
+		telnet <addr> 1237
+
+
+------------------
+Supported Hardware
+------------------
+
+The software expects to run on a standard PC with an i386 or better CPU.  It is
+expected that a colour 80x25 text display is fitted and that there is at least
+640 kBytes of RAM.
+
+It's unlikely that this software will work unless it's tweaked for your target
+hardware environment.  This release supports the three different setups that I
+use at the moment.  To use one or another change the commenting of the line
+MDEFS= in the main "Makefile".
+
+Four configurations are currently supported, supporting a version that has no
+Ethernet or 3 different ISA Ethernet cards.  All cards are assumed to be at
+I/O address 0x300 and IRQ 5 (for this release anyway).  Currently the 3 card
+types supported are the 3Com 3C509, (Novell & clone) NE2000 and Intel
+EtherExpress Pro/10+.
+
+
+-----------------
+Building The Code
+-----------------
+
+The code has been built and tested under Linux using egcs v2.91.66 and a
+fairly standard set of GNU utilities.
+
+To build the code, ensure that the "i386" libraries have been built and
+intalled in the "lib" directory, modify the Makefile in this directory as
+necessary, and run "make".

@@ -1,0 +1,23 @@
+------------------
+thread (20000904a)
+------------------
+
+The thread library provides dynamic thread management facilities.  In
+particular it adds the ability to create and release threads at run-time,
+whilst also supporting policy-based scheduling of these threads.
+
+
+--------------------
+Library dependencies
+--------------------
+
+debug
+context
+heap
+	
+
+-------
+Details
+-------
+
+None currently available.

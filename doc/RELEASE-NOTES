@@ -1,0 +1,144 @@
+----------------------------------------------
+Release Notes For Liquorice Snapshot 20001018a
+----------------------------------------------
+
+This is a public snapshot of Liquorice.  It is definitely not classed as stable
+(i.e. assume that all APIs are moving targets) and is likely to change
+significantly before a stable v1.0 release is made.  For more on this, please
+see the section "General Thoughts".
+
+Details of specific test programs can now be found in "README" files located
+with the test sources.
+
+
+---------------------------------
+Change Log For Snapshot 20001018a
+---------------------------------
+
+	* Allow TCP services to reject connections as well as accepting
+	  them.
+	
+	* Fixed a couple of problems in the SMC91C96 Ethernet driver.
+	
+	* Started to implement PPP (point-to-point protocol) support.
+	  Initially this is limited to purely asynchronous channels,
+	  bound to UARTs.
+
+	* Fixed a minor bug in the (idle) thread code for freeing up
+	  space after a thread exits.
+	
+	* Reworked some of the debug handling to make all of the debug
+	  related code disappear if a non-debug version is built.
+	
+	* Realized that I need to protect downcalls as much as upcalls
+	  (between client and server objects) so added reference count
+	  protection.
+	
+	* Modified the TCP behaviour to use the PSH flag when sending
+	  data segments.  This ensures that Windows NT will not decide
+	  to wait up to 20 seconds (measured in a real application)
+	  before delivering data to an application.
+
+	* Changed the software license from LGPL to GPL with an
+	  exception clause to allow linking with non-GPL'd code.
+	
+	  	
+-----------------------------------
+Specific Thoughts For This Snapshot
+-----------------------------------
+
+This release sees a few useful bug fixes and minor enhancements, but the major
+addition is the PPP stack.  Probably the next major task will be to write a
+dialer and incoming-call handler (plus, more generally modem support) to allow
+Liquorice to be used in a number of remote applications.
+
+The PPP code is probably a good example of the "plan to throw one away" axiom.
+Having got this far I've realized that there are quite a few things that should
+be done to this implementation to make it *much* smaller, although
+functionally, there's not that much that should change.  FWIW there's quite a
+bit of the state machine handling that could be simplified or certainly shared
+between all of the different PPP protocols (I used to rather naively believe
+PPP was a protocol, but of course it's really lots of protocols all lumped
+together under one name!).  I will probably save the necessary changes for a
+rainy day however :-)
+
+
+--------------------------
+General Thoughts And Notes
+--------------------------
+
+I am releasing these snapshots so that anyone who is interested in seeing and
+playing with the code may do so.  I also hope that by trying make frequent
+releases it will help anyone else who would like to contribute additional code
+(there's much less chance of an incompatible change if there aren't long
+periods of "invisible" coding).
+
+I have tended to adopt the philosophy (I don't know who originally said
+approximately this) of:
+
+	"first make it work - then make it work fast"
+	
+For fast I also tend to mean more efficiently too :-)  This sometimes means
+that some of the newer code isn't perhaps ideal, but it allows me to either
+develop some other part of the system or to act as a testbed until I find out
+how I should *really* write it.  In the words of Fred Brooks:
+
+	"Plan to throw one away; you will, anyhow"
+
+As it's really too early to allocate version numbers at this stage I've decided
+to simply use a dated snapshots.  Each snapshot also has a letter which allows
+me to make 26 releases on any one day :-)
+
+The code is intended to stand-alone and doesn't require any other libraries,
+include files, etc.
+
+
+-----------------------------------
+Features Available In This Snapshot
+-----------------------------------
+
+Here are the current highlights:
+
+	* Multi-threaded, modular, kernel with high-performance context
+	  switching and thread-safe support functions.
+
+	* Support for AVR ATMega103, AVR AT90S8515 and i386-family
+	  CPUs.  Portability is a major design aim.
+	
+	* Almost entirely coded in C (a small amount of asm).
+	  	
+	* High performance interrupt handlers with most activity
+	  taking place in priority-scheduled threads (avoids lost
+	  UART interrupts, etc).
+		
+        * Very flexible, simple, synchronization mechanisms (e.g.
+          condition variables, couting semaphores, reader/writer
+          locks).
+
+	* IP stack with TCP, UDP, ICMP, ARP, PPP and SLIP support.
+
+        * Simple HTTP service.
+
+        * Internal state debugging via a TCP service.
+        		
+	* Ethernet device drivers.
+
+	* All services instanciated at run-time, allowing multiple
+	  copies of each to be created.  All inter-service binding
+	  performed at run-time.
+	
+        * Bit-banged I2C bus master support.
+
+				
+---------------
+Contact Details
+---------------
+
+If you would like to contact me regarding this software, please email me:
+
+        dave@humbug.demon.co.uk
+	davejh@users.sourceforge.net
+	
+				
+				Regards
+				Dave Hudson

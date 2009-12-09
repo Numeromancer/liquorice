@@ -1,0 +1,301 @@
+-------------------------
+Liquorice Coding Standard
+-------------------------
+
+
+This is a short note about the coding style adopted for the source files
+in this project.  It's actually base on the rules used for VSTa, written
+by Andy Valencia <vandys@zendo.com>.  These are a little different to
+the style proposed by Linus Torvalds for the Linux kernel, but there are
+more similarities than not.  I have included some of Linus' comments
+where they make things clearer.
+
+I've put this document together in the hope that it will ensure that the
+sources retain a consistent style. Quoting Andy:
+
+	"I've tried to hone it down to just 10 rules.  It may
+	 seem like a lot, but hopefully 5 of them will match
+	 your personal style anyway, so it probably isn't as
+	 bad as it looks.
+
+	 In case you're wondering, this wasn't my C style of
+	 choice either, but it's pretty much the standard for
+	 all UNIX kernel work and is well favoured for other
+	 such work.  I now stick with it, accepting Henry
+	 Spencer's observation that "standard is better than
+	 better", at least for C styles."
+
+	
+I also used to use a different coding style, but have concluded after
+many years that this format is clearer, easier to follow after 24 hours
+in front of a screen and less likely to introduce silly coding mistakes.
+I have seen the light...
+	
+	
+				Regards,
+				Dave Hudson
+
+
+
+0. Henry Spencer's Rules of C
+
+Read them - believe them - rote learn them!  The rules can be found as
+"ten-rules.txt".  This doesn't count as one of the coding style rules, but
+don't even think of writing in C until you've digested their full meaning!
+
+For what it's worth they're now looking a little old, but they're basically
+very sound.  Running GCC with -Wall works instead of lint, and for "all the
+world's a VAX" try "all the world's a PC" :-)
+
+
+1. Comments
+
+/*
+ * file.c
+ *	A one-line description of the contents of the file.
+ *
+ * Any copyrights, disclaimers or author details.
+ *
+ * Details about things found in the file - what they do, the strategy
+ * behind their implementation and any generic notes about where to look
+ * for further information.
+ */
+
+/*
+ * function_name()
+ *	One-liner (only) for the function
+ *
+ * Further discussion.  This is a good place to mention success/failure
+ * values and so forth.
+ *
+ * A distinct thought, or perhaps a note about assumptions or limitations.
+ */
+struct foobar *function_name(void)
+{
+	int x;
+
+	/*
+	 * Describe a block of code, then write the block of code
+	 */
+	for (x = 0; x < FOOBLAT; ++x) {
+		something(x);
+		...
+	}
+}
+
+Do NOT use pretty blocks of stars.  They make it hard to update the
+comments.  We all know what happens when comments are a pain to update....
+
+Judgement on the use of C++ comments, "//", is reserved.  They may be used
+at the end of a line, but not for anything else.
+
+Generally comments should explain what something does NOT how it does it.
+If a comment needs to explain how something works, you should think about
+whether the code is too obscure or complex - perhaps it can be simplified,
+or perhaps the complexity can be moved to an inlined function that can be
+looked at in isolation.
+
+
+2. Indentation
+
+Tabs are 8 characters and therefore indentations are also 8 characters.  If
+you have too much nesting in your code and can no longer read it because of
+the tabs then it's really time to go and rewrite things.  GCC can do a great
+job of inlining code if the complexity is really necessary.
+
+Do not use tabs in the actual code/data part.  You may use tabs to space out
+to the following comments so that they all start in the same column.
+Trailing tabs before the closing */ just make it hard to add further words,
+so don't use them either (yes, making the closing */'s on lines match
+up is pretty, but we have art and museums for that).
+
+int foob;		/* Will count instances of foob */
+static char bar;	/*  ...the char matching foob */
+
+
+3. The "one true brace style"
+
+Probably the most "religious" argument in C styling is the placement of
+braces.  Unlike the indent size, there are few technical reasons to choose
+one placement strategy over the other, but the preferred way, as shown to
+us by the prophets Kernighan and Ritchie, is to put the opening brace last
+on the line, and put the closing brace first, thusly:
+
+	if (x is true) {
+		... we do y
+	}
+
+However, there is one special case, namely functions: they have the opening
+brace at the beginning of the next line, thus:
+
+	int function(int x)
+	{
+		... body of function
+	}
+
+Heretic people all over the world have claimed that this inconsistency is ...
+well ...  inconsistent, but all right-thinking people know that (a) K&R are
+_right_ and (b) K&R are right.  Besides, functions are special anyway (you
+can't nest them in C).  It's such a good idea that when Niklaus Wirth
+designed the Oberon language he used _exactly_ the same style in all the
+same places (there it's not inconsistent - simply a sign of genius :-)).
+
+Note that the closing brace is empty on a line of its own, _except_ in the
+cases where it is followed by a continuation of the same statement, i.e. a
+"while" in a do-statement or an "else" in an if-statement, like this:
+
+	do {
+		...
+	} while (condition);
+
+and
+
+	if (x == y) {
+		..
+	} else if (x > y) {
+		...
+	} else {
+		....
+	}
+			
+Also, note that this brace-placement also minimizes the number of empty
+(or almost empty) lines, without any loss of readability.  Thus, as the
+supply of new-lines on your screen is not a renewable resource (think 25-line
+terminal screens here), you have more empty lines to put comments on.  Here
+are some other examples
+	
+	for (x = 0; x < 20; ++x) {
+		...
+	}
+
+	while (condition) {
+		...
+	}
+	
+	switch (value) {
+	case one:
+		...
+		break;
+
+	case two:
+		...
+		break;
+		
+	default:
+		...
+	}
+
+
+4. Optional braces aren't!
+
+Do NOT use the open versions of statements, e.g.
+
+	for (x = 0; x < 20; ++x)
+		bar();
+        blah();
+		
+If you aren't tripped by these, somebody else will be instead when they come
+to modify the code.  Instead go for:
+
+	for (x = 0; x < 20; ++x) {
+		bar();
+	}
+	blah();
+
+
+5. C types
+
+Use the basic C types for most work.  If you have a struct pointer, just
+name it as such.  Use:
+
+struct foo {
+	int field1;
+	...
+};
+...
+{
+	struct foo *f;
+
+	f = ...;
+	f->field1 = bar;
+}
+
+And not:
+
+typedef struct {
+	int field1;
+	...
+} foo_t;
+...
+
+C has good basic ways for naming types, and typedef's should not be used
+to hide them.  The exceptions are industry-recognized types like "ushort"
+(unsigned short) and so forth, or where a typdef'd type helps improve the
+portability of the code.
+
+
+6. Functions
+
+Make functions short, sweet and only do one thing.  The simpler it is,
+the easier it is to understand and maintain, and the less likely it is to
+be broken in the first place.  There are some instances where functions
+need to be long, but they tend to be places where there are say large
+if or switch statements.
+
+
+7. Naming
+
+Use short local variable names within functions.  A phone number is 7 digits
+because that's the size of "name" the human mind can carry around easily.
+Keep variables in the same class of length.  Long, descriptive variables
+make code-reading cumbersome, as the mind continually must re-parse the
+components of the variable name.  If we're talking about a loop counter,
+then "i" is much easier to follow than "this_is_a_loop_counter".
+
+Globals (both function names and variables) used across source files will
+need to be have longer, more descriptive names.
+
+Don't use "Hungarian" notation, leave that to Micro$oft - it's just another
+cause of potential errors.  A variable's type definition should be
+visible on-screen anyway because we should be looking at a short function
+anyway :-)
+
+
+8. ANSI void *
+
+Use ANSI void pointers when you're dealing with a generic pointer value.
+Do NOT do maths with such a pointer.  Yes, GCC will happen to treat it as
+a char *.  If you're counting on this, cast it to (char *) and then do
+the maths.
+
+
+9. #define's
+
+A short #define can help encapsulate a simple operation or value into a
+useful name.  If you find that the number of "#define"'s is becoming a
+large fraction of your header file (or even your code!) then back off.
+Make it a function.  Maybe it'll go slower... maybe GCC will in-line it
+anyway.
+
+
+10. Patching somebody's code
+
+Do not go and fiddle somebody's organization just because you think you
+can make it prettier.  It is especially bad form to fiddle the indentation
+and layout, PLUS add some new stuff, then hand them back the entire result.
+Now they have to dig through a bunch of indentation changes while trying
+to find functional changes.
+
+extern int x, y, z;
+
+	VVV
+
+extern int x;
+extern int y;
+extern int w;
+extern int z;
+
+Such a change adds little, but fills our screens with diffs.  If you take
+over the file AND you add comments to each line, it might be worth it.  It
+would be really easy to miss that "w" in there at the same time though,
+wouldn't it?

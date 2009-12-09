@@ -1,0 +1,2 @@
+#!/bin/sh
+pppd -d -detach kdebug 4 crtscts lock 190.1.1.1:190.1.1.2 /dev/ttyS0 9600 &

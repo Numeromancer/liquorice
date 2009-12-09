@@ -1,0 +1,18 @@
+#
+# General rules.
+#
+
+.c.o:
+	$(CC) $(CCFLAGS) -c -o $*.o $<
+
+.c.s:
+	$(CC) $(CCFLAGS) -c -S -o $*.s $<
+
+.S.o:
+	$(CC) -D__ASSEMBLY__ $(ASFLAGS) $(CPPFLAGS) -c -o $*.o $<
+
+.S.s:
+	$(CC) -D__ASSEMBLY__ $(CPPFLAGS) -E -o $*.s $<
+
+.s.o:
+	$(AS) $(ASFLAGS) -o $*.o $<
