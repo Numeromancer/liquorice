@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = udp.o
+OBJS = udp-$(arch).o
 
-all: libudp.a
+all: libudp-$(arch).a
 
-libudp.a: $(OBJS)
-	$(AR) $(ARFLAGS) libudp.a $(OBJS)
+libudp-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libudp-$(arch).a $(OBJS)
 
-install: libudp.a
-	$(INSTALL) libudp.a $(LIBDIR)/libudp.a
+install: libudp-$(arch).a
+	$(INSTALL) libudp-$(arch).a $(LIBDIR)/libudp-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

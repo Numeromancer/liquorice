@@ -99,10 +99,10 @@ udp: dummy
 
 install: all
 	for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
-	
+
 clean: dummy
 	for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
-	
+
 clobber: dummy
 	for i in $(SUBDIRS); do $(MAKE) -C $$i clobber; done
 

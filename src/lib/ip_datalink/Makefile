@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = ip_datalink.o
+OBJS = ip_datalink-$(arch).o
 
-all: libip_datalink.a
+all: libip_datalink-$(arch).a
 
-libip_datalink.a: $(OBJS)
-	$(AR) $(ARFLAGS) libip_datalink.a $(OBJS)
+libip_datalink-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libip_datalink-$(arch).a $(OBJS)
 
-install: libip_datalink.a
-	$(INSTALL) libip_datalink.a $(LIBDIR)/libip_datalink.a
+install: libip_datalink-$(arch).a
+	$(INSTALL) libip_datalink-$(arch).a $(LIBDIR)/libip_datalink-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

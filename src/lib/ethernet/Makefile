@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = ethernet.o
+OBJS = ethernet-$(arch).o
 
-all: libethernet.a
+all: libethernet-$(arch).a
 
-libethernet.a: $(OBJS)
-	$(AR) $(ARFLAGS) libethernet.a $(OBJS)
+libethernet-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libethernet-$(arch).a $(OBJS)
 
-install: libethernet.a
-	$(INSTALL) libethernet.a $(LIBDIR)/libethernet.a
+install: libethernet-$(arch).a
+	$(INSTALL) libethernet-$(arch).a $(LIBDIR)/libethernet-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

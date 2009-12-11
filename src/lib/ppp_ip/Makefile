@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = ppp_ip.o
+OBJS = ppp_ip-$(arch).o
 
-all: libppp_ip.a
+all: libppp_ip-$(arch).a
 
-libppp_ip.a: $(OBJS)
-	$(AR) $(ARFLAGS) libppp_ip.a $(OBJS)
+libppp_ip-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libppp_ip-$(arch).a $(OBJS)
 
-install: libppp_ip.a
-	$(INSTALL) libppp_ip.a $(LIBDIR)/libppp_ip.a
+install: libppp_ip-$(arch).a
+	$(INSTALL) libppp_ip-$(arch).a $(LIBDIR)/libppp_ip-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

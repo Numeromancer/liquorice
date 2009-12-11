@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = condvar.o
+OBJS = condvar-$(arch).o
 
-all: libcondvar.a
+all: libcondvar-$(arch).a
 
-libcondvar.a: $(OBJS)
-	$(AR) $(ARFLAGS) libcondvar.a $(OBJS)
+libcondvar-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libcondvar-$(arch).a $(OBJS)
 
-install: libcondvar.a
-	$(INSTALL) libcondvar.a $(LIBDIR)/libcondvar.a
+install: libcondvar-$(arch).a
+	$(INSTALL) libcondvar-$(arch).a $(LIBDIR)/libcondvar-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

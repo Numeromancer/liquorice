@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = netbuf.o
+OBJS = netbuf-$(arch).o
 
-all: libnetbuf.a
+all: libnetbuf-$(arch).a
 
-libnetbuf.a: $(OBJS)
-	$(AR) $(ARFLAGS) libnetbuf.a $(OBJS)
+libnetbuf-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libnetbuf-$(arch).a $(OBJS)
 
-install: libnetbuf.a
-	$(INSTALL) libnetbuf.a $(LIBDIR)/libnetbuf.a
+install: libnetbuf-$(arch).a
+	$(INSTALL) libnetbuf-$(arch).a $(LIBDIR)/libnetbuf-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

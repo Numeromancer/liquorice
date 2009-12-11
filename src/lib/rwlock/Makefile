@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = rwlock.o
+OBJS = rwlock-$(arch).o
 
-all: librwlock.a
+all: librwlock-$(arch).a
 
-librwlock.a: $(OBJS)
-	$(AR) $(ARFLAGS) librwlock.a $(OBJS)
+librwlock-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) librwlock-$(arch).a $(OBJS)
 
-install: librwlock.a
-	$(INSTALL) librwlock.a $(LIBDIR)/librwlock.a
+install: librwlock-$(arch).a
+	$(INSTALL) librwlock-$(arch).a $(LIBDIR)/librwlock-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

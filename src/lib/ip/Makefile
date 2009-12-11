@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = ip.o
+OBJS = ip-$(arch).o
 
-all: libip.a
+all: libip-$(arch).a
 
-libip.a: $(OBJS)
-	$(AR) $(ARFLAGS) libip.a $(OBJS)
+libip-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libip-$(arch).a $(OBJS)
 
-install: libip.a
-	$(INSTALL) libip.a $(LIBDIR)/libip.a
+install: libip-$(arch).a
+	$(INSTALL) libip-$(arch).a $(LIBDIR)/libip-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = heap.o
+OBJS = heap-$(arch).o
 
-all: libheap.a
+all: libheap-$(arch).a
 
-libheap.a: $(OBJS)
-	$(AR) $(ARFLAGS) libheap.a $(OBJS)
+libheap-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libheap-$(arch).a $(OBJS)
 
-install: libheap.a
-	$(INSTALL) libheap.a $(LIBDIR)/libheap.a
+install: libheap-$(arch).a
+	$(INSTALL) libheap-$(arch).a $(LIBDIR)/libheap-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

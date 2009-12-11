@@ -7,16 +7,16 @@ include ../Makerules
 
 EXTRADIR = $(ARCHDIR)
 
-OBJS = ipcsum.o \
-	$(EXTRADIR)/ipcsum.o
+OBJS = ipcsum-$(arch).o \
+	$(EXTRADIR)/ipcsum-$(arch).o
 
-all: libipcsum.a
+all: libipcsum-$(arch).a
 
-libipcsum.a: $(OBJS)
-	$(AR) $(ARFLAGS) libipcsum.a $(OBJS)
+libipcsum-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libipcsum-$(arch).a $(OBJS)
 
-install: libipcsum.a
-	$(INSTALL) libipcsum.a $(LIBDIR)/libipcsum.a
+install: libipcsum-$(arch).a
+	$(INSTALL) libipcsum-$(arch).a $(LIBDIR)/libipcsum-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

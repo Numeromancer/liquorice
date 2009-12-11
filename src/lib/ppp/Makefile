@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = ppp.o
+OBJS = ppp-$(arch).o
 
-all: libppp.a
+all: libppp-$(arch).a
 
-libppp.a: $(OBJS)
-	$(AR) $(ARFLAGS) libppp.a $(OBJS)
+libppp-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
 
-install: libppp.a
-	$(INSTALL) libppp.a $(LIBDIR)/libppp.a
+install: libppp-$(arch).a
+	$(INSTALL) libppp-$(arch).a $(LIBDIR)/libppp-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

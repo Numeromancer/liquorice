@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = oneshot.o
+OBJS = oneshot-$(arch).o
 
-all: liboneshot.a
+all: liboneshot-$(arch).a
 
-liboneshot.a: $(OBJS)
-	$(AR) $(ARFLAGS) liboneshot.a $(OBJS)
+liboneshot-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) liboneshot-$(arch).a $(OBJS)
 
-install: liboneshot.a
-	$(INSTALL) liboneshot.a $(LIBDIR)/liboneshot.a
+install: liboneshot-$(arch).a
+	$(INSTALL) liboneshot-$(arch).a $(LIBDIR)/liboneshot-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

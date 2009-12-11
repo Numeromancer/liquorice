@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = thread.o
+OBJS = thread-$(arch).o
 
-all: libthread.a
+all: libthread-$(arch).a
 
-libthread.a: $(OBJS)
-	$(AR) $(ARFLAGS) libthread.a $(OBJS)
+libthread-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libthread-$(arch).a $(OBJS)
 
-install: libthread.a
-	$(INSTALL) libthread.a $(LIBDIR)/libthread.a
+install: libthread-$(arch).a
+	$(INSTALL) libthread-$(arch).a $(LIBDIR)/libthread-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

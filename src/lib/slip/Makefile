@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = slip.o
+OBJS = slip-$(arch).o
 
-all: libslip.a
+all: libslip-$(arch).a
 
-libslip.a: $(OBJS)
-	$(AR) $(ARFLAGS) libslip.a $(OBJS)
+libslip-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libslip-$(arch).a $(OBJS)
 
-install: libslip.a
-	$(INSTALL) libslip.a $(LIBDIR)/libslip.a
+install: libslip-$(arch).a
+	$(INSTALL) libslip-$(arch).a $(LIBDIR)/libslip-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

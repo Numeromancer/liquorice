@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = ethdev.o
+OBJS = ethdev-$(arch).o
 
-all: libethdev.a
+all: libethdev-$(arch).a
 
-libethdev.a: $(OBJS)
-	$(AR) $(ARFLAGS) libethdev.a $(OBJS)
+libethdev-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libethdev-$(arch).a $(OBJS)
 
 install: libethdev.a
-	$(INSTALL) libethdev.a $(LIBDIR)/libethdev.a
+	$(INSTALL) libethdev-$(arch).a $(LIBDIR)/libethdev-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

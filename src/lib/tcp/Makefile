@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = tcp.o
+OBJS = tcp-$(arch).o
 
-all: libtcp.a
+all: libtcp-$(arch).a
 
-libtcp.a: $(OBJS)
-	$(AR) $(ARFLAGS) libtcp.a $(OBJS)
+libtcp-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libtcp-$(arch).a $(OBJS)
 
-install: libtcp.a
-	$(INSTALL) libtcp.a $(LIBDIR)/libtcp.a
+install: libtcp-$(arch).a
+	$(INSTALL) libtcp-$(arch).a $(LIBDIR)/libtcp-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

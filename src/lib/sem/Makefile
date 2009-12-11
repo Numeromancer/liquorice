@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = sem.o
+OBJS = sem-$(arch).o
 
-all: libsem.a
+all: libsem-$(arch).a
 
-libsem.a: $(OBJS)
-	$(AR) $(ARFLAGS) libsem.a $(OBJS)
+libsem-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libsem-$(arch).a $(OBJS)
 
-install: libsem.a
-	$(INSTALL) libsem.a $(LIBDIR)/libsem.a
+install: libsem-$(arch).a
+	$(INSTALL) libsem-$(arch).a $(LIBDIR)/libsem-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

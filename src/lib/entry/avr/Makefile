@@ -5,12 +5,12 @@
 include ../../Makedefs
 include ../../Makerules
 
-ENTRYOBJ = $(CPUDIR)/entry.o
+ENTRYOBJ = $(CPUDIR)/entry-$(arch).o
 
 all: $(ENTRYOBJ)
 
 install: $(ENTRYOBJ)
-	$(INSTALL) $(ENTRYOBJ) $(LIBDIR)/entry.o
+	$(INSTALL) $(ENTRYOBJ) $(LIBDIR)/entry-$(arch).o
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;

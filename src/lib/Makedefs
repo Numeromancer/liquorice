@@ -9,13 +9,17 @@ LIQDIR = $(HOME)/workspace/git/liquorice
 # that you want to use.
 #
 
-#ARCHDIR = avr
-#CPUDIR = at90s8515
-#MASFLAGS = -mmcu=at90s8515
-#MCCFLAGS = -mmcu=at90s8515
-#MDEFS = -DAT90S8515
-#TARGET_PREF = avr-
+arch=atmega644p
 
+ifeq ($(arch),at90s8515)
+ARCHDIR = avr
+CPUDIR = at90s8515
+MASFLAGS = -mmcu=at90s8515
+MCCFLAGS = -mmcu=at90s8515
+MDEFS = -DAT90S8515
+TARGET_PREF = avr-
+
+else ifeq ($(arch),atmega644p)
 ARCHDIR = avr
 CPUDIR = atmega644p
 MASFLAGS = -mmcu=atmega644p
@@ -23,19 +27,24 @@ MCCFLAGS = -mmcu=atmega644p
 MDEFS = -DATMEGA644P
 TARGET_PREF = avr-
 
-#ARCHDIR = avr
-#CPUDIR = atmega103
-#MASFLAGS = -mmcu=atmega103
-#MCCFLAGS = -mmcu=atmega103
-#MDEFS = -DATMEGA103
-#TARGET_PREF = avr-
+else ifeq ($(arch),atmega103)
+ARCHDIR = avr
+CPUDIR = atmega103
+MASFLAGS = -mmcu=atmega103
+MCCFLAGS = -mmcu=atmega103
+MDEFS = -DATMEGA103
+TARGET_PREF = avr-
 
-#ARCHDIR = i386
-#CPUDIR =
-#MASFLAGS =
-#MCCFLAGS = -m386
-#MDEFS = -DI386
-#TARGET_PREF =
+else ifeq ($(arch),i386)
+ARCHDIR = i386
+CPUDIR =
+MASFLAGS =
+MCCFLAGS = -m386
+MDEFS = -DI386
+TARGET_PREF =
+else
+$(error No architecture defined; set arch to one of (at90s8515|atmega644p|atmega103|i386)
+endif
 
 #
 # Directory path for libraries that are built

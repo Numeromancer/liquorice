@@ -5,15 +5,15 @@
 include ../Makedefs
 include ../Makerules
 
-OBJS = membuf.o
+OBJS = membuf-$(arch).o
 
-all: libmembuf.a
+all: libmembuf-$(arch).a
 
-libmembuf.a: $(OBJS)
-	$(AR) $(ARFLAGS) libmembuf.a $(OBJS)
+libmembuf-$(arch).a: $(OBJS)
+	$(AR) $(ARFLAGS) libmembuf-$(arch).a $(OBJS)
 
-install: libmembuf.a
-	$(INSTALL) libmembuf.a $(LIBDIR)/libmembuf.a
+install: libmembuf-$(arch).a
+	$(INSTALL) libmembuf-$(arch).a $(LIBDIR)/libmembuf-$(arch).a
 
 clean:
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;
