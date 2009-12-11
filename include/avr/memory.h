@@ -24,7 +24,7 @@
  * PSTR()
  *	Accessor to get at strings within the ROM space.
  */
-#define PSTR(s) ({static char c[] __attribute__ ((progmem)) = s;c;})
+#define PSTR(s) ({static unsigned char c[] __attribute__ ((progmem)) = s;c;})
 
 /*
  * __lpm_macro()

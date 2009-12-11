@@ -47,7 +47,7 @@ extern void debug_init(void);
 #define debug_print_pstr(data)
 #endif
 
-#if defined(ATMEGA103) || defined(AT90S8515)
+#if defined(ATMEGA103) || defined(AT90S8515) || defined(ATMEGA644P)
 #include "avr/debug.h"
 #elif defined(I386)
 #include "i386/debug.h"

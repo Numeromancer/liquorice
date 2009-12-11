@@ -2,7 +2,7 @@
 # Path for the root directory of this Liquorice installation.
 #
 
-LIQDIR = /home/dave/liquorice/devel
+LIQDIR = $(HOME)/workspace/git/liquorice
 
 #
 # These are the various library builds currently supported.  Uncomment the one
@@ -17,11 +17,18 @@ LIQDIR = /home/dave/liquorice/devel
 #TARGET_PREF = avr-
 
 ARCHDIR = avr
-CPUDIR = atmega103
-MASFLAGS = -mmcu=atmega103
-MCCFLAGS = -mmcu=atmega103
-MDEFS = -DATMEGA103
+CPUDIR = atmega644p
+MASFLAGS = -mmcu=atmega644p
+MCCFLAGS = -mmcu=atmega644p
+MDEFS = -DATMEGA644P
 TARGET_PREF = avr-
+
+#ARCHDIR = avr
+#CPUDIR = atmega103
+#MASFLAGS = -mmcu=atmega103
+#MCCFLAGS = -mmcu=atmega103
+#MDEFS = -DATMEGA103
+#TARGET_PREF = avr-
 
 #ARCHDIR = i386
 #CPUDIR =

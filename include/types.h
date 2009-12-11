@@ -18,7 +18,7 @@
  * "copying-liquorice.txt" for details.
  */
 
-#if defined(ATMEGA103) || defined(AT90S8515)
+#if defined(ATMEGA103) || defined(AT90S8515) || defined(ATMEGA644P)
 #include "avr/types.h"
 #elif defined(I386)
 #include "i386/types.h"

@@ -31,6 +31,9 @@
 #elif defined(AT90S8515)
 #include "avr/context_switch.h"
 #include "avr/at90s8515/context_enter.h"
+#elif defined(ATMEGA644P)
+#include "avr/context_switch.h"
+#include "avr/atmega644p/context_enter.h"
 #elif defined(I386)
 #include "i386/context_switch.h"
 #include "i386/context_enter.h"

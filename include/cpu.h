@@ -20,6 +20,8 @@
 #include "avr/atmega103/atmega103.h"
 #elif defined(AT90S8515)
 #include "avr/at90s8515/at90s8515.h"
+#elif defined(ATMEGA644P)
+#include "avr/atmega644p/atmega644p.h"
 #elif defined(I386)
 #include "i386/i386.h"
 #else

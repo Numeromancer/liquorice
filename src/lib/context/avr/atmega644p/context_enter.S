@@ -1,5 +1,7 @@
 /*
- * memory.h
+ * context/atmega103/context_enter.S
+ *	Entry point to the system and to any of the functions that might cause
+ *	scheduler pre-emption to occur.
  *
  * Copyright (C) 2000 David J. Hudson <dave@humbug.demon.co.uk>
  *
@@ -17,10 +19,20 @@
  * "copying-liquorice.txt" for details.
  */
 
-#if defined(ATMEGA103) || defined(AT90S8515) || defined(ATMEGA644P)
-#include "avr/memory.h"
-#elif defined(I386)
-#include "i386/memory.h"
-#else
-#error "no valid architecture found"
-#endif
+ 	.arch	atmega644p
+
+/*
+ * context_enter
+ *	Facility for starting a context's normal execution.
+ */
+	.global	context_enter
+
+context_enter:
+	pop	r25
+	pop	r24
+	pop	r0
+	out	0x3b, r0
+	pop	r0
+	out	0x3f, r0
+	pop	r1
+	reti

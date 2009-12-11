@@ -20,7 +20,7 @@
 #include "types.h"
 #include "ipcsum.h"
 
-#if defined(ATMEGA103) || defined(AT90S8515)
+#if defined(ATMEGA103) || defined(AT90S8515) || defined(ATMEGA644P)
 #include "avr/ipcsum.h"
 #elif defined(I386)
 #include "i386/ipcsum.h"

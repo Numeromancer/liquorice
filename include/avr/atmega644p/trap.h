@@ -1,5 +1,6 @@
 /*
- * isr.h
+ * avr/atmega103/trap.h
+ *	Standard pre-emption trap handler.
  *
  * Copyright (C) 2000 David J. Hudson <dave@humbug.demon.co.uk>
  *
@@ -17,33 +18,35 @@
  * "copying-liquorice.txt" for details.
  */
 
-#if defined(ATMEGA103) || defined(AT90S8515) || defined(ATMEGA644P)
-#include "avr/isr.h"
-#elif defined(I386)
-#include "i386/isr.h"
-#else
-#error "no valid architecture found"
-#endif
-
 /*
- * isr_save_disable()
+ * Trap frame layout.
+ *	This is the layout of the stack after a trap/interrupt handler has
+ *	been invoked.
+ *
+ * The stack frame shown here shows the stack after registers that can be
+ * wantonly destroyed by GCC have been saved, but before the C code ISR has
+ * been called.
+ *
+ * Remember of course that the bottom of the structure was the last thing to
+ * have been pushed onto the stack and the top is the first!
  */
-extern inline fast_u8_t isr_save_disable(void)
-{
-	fast_u8_t ret;
-
-	ret = isr_check_disabled();
-	isr_disable();
-
-	return ret;
-}
-
-/*
- * isr_restore()
- */
-extern inline void isr_restore(fast_u8_t disabled)
-{
-	if (!disabled) {
-		isr_enable();
-	}
-}
+struct trap_frame {
+	u8_t tf_r31;
+	u8_t tf_r30;
+	u8_t tf_r27;
+	u8_t tf_r26;
+	u8_t tf_r25;
+	u8_t tf_r24;
+	u8_t tf_r23;
+	u8_t tf_r22;
+	u8_t tf_r21;
+	u8_t tf_r20;
+	u8_t tf_r19;
+	u8_t tf_r18;
+	u8_t tf_rampz;
+	u8_t tf_sreg;
+	u8_t tf_r1;
+	u8_t tf_r0;
+	u8_t tf_pchi;
+	u8_t tf_pclo;
+};

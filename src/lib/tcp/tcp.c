@@ -1324,7 +1324,7 @@ static void tcp_recv_state_machine(struct tcp_instance *ti, struct tcp_socket *s
 				
 	case TCS_TIME_WAIT:
 	case TCS_CLOSED:
-	default:
+	default:  { break; }  
 	}
 }
 

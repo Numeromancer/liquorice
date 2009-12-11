@@ -24,9 +24,7 @@
 #include "debug.h"
 #include "context.h"
 
-#if defined(ATMEGA103)
-#include "avr/context_switch.h"
-#elif defined(AT90S8515)
+#if defined(ATMEGA103) || defined(AT90S8515) || defined(ATMEGA644P)
 #include "avr/context_switch.h"
 #elif defined(I386)
 #include "i386/context_switch.h"
