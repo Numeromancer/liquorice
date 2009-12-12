@@ -9,7 +9,7 @@ LIBDIR = ../../../lib/avr/atmega103
 
 SUBDIRS = debug srv
 
-OBJS = main.o
+OBJS = main-$(arch).o
 
 all: liquorice.srec
 
@@ -22,6 +22,16 @@ srv: dummy
 liquorice.srec: liquorice.elf
 	$(OBJCOPY) -O srec liquorice.elf liquorice.srec
 
+liquorice_libs= libtcp-$(arch).a libudp-$(arch).a libip-$(arch).a libipcsum-$(arch).a \
+ libppp_ip-$(arch).a libppp-$(arch).a libppp_ahdlc-$(arch).a libslip-$(arch).a \
+ libethernet_ip-$(arch).a libethernet-$(arch).a libip_datalink-$(arch).a \
+ libethdev-$(arch).a liboneshot-$(arch).a \
+ libthread-$(arch).a librwlock-$(arch).a libsem-$(arch).a \
+ libcondvar-$(arch).a libnetbuf-$(arch).a libmembuf-$(arch).a \
+ libheap-$(arch).a libcontext-$(arch).a \
+ libdebug-$(arch).a libsrv-$(arch).a 
+
+LIB_LDFLAGS=$(patsubst lib%.a,-l%,$(liquorice_libs))
 #
 # Note that "entry.o" *MUST* be the first object in object file list as it
 # contains the entry point into the system.  Also note that the libraries must
@@ -29,15 +39,14 @@ liquorice.srec: liquorice.elf
 #
 liquorice.elf: dummy $(OBJS)
 	for i in $(SUBDIRS); do $(MAKE) -C $$i all; done
-	$(LD) $(LDFLAGS) $(LIBDIR)/entry.o main.o -Ldebug -Lsrv -L$(LIBDIR) -L/usr/local/lib/gcc-lib/avr/2.95.2 \
-		-ltcp -ludp -lip -lipcsum -lppp_ip -lppp -lppp_ahdlc -lslip \
-		-lethernet_ip -lethernet -lip_datalink -lethdev -loneshot \
-		-lsrv -lthread -lrwlock -lsem -lcondvar -lnetbuf -lmembuf \
-		-lheap -lcontext -ldebug -lgcc -o liquorice.elf
+	$(LD) $(LDFLAGS) $(LIBDIR)/entry-$(arch).o main-$(arch).o \
+       -L/usr/avr/lib -Ldebug -Lsrv -L$(LIBDIR) \
+       $(LIB_LDFLAGS) -lm -lc \
+       -o liquorice.elf
 
 reset:
 	uisp -dstk200
-	
+
 erase:
 	uisp -dstk200 --erase
 
@@ -45,7 +54,7 @@ install: liquorice.elf
 	uisp -dstk200 --upload if=liquorice.srec -v=3
 
 reload: erase install
-	
+
 clean: dummy
 	for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
 	find -name "*.[oas]" -print -exec $(RM) \{\} \;
