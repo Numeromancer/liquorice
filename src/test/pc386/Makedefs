@@ -2,12 +2,14 @@
 # Path for the root directory of this Liquorice installation.
 #
 
-LIQDIR = /home/dave/liquorice/devel
+LIQDIR = $(HOME)/workspace/git/liquorice
 
 #
 # These are the various hardware platforms currently supported.  Uncomment the
 # one that you want to use.
 #
+
+arch=i386
 
 ARCHDIR = i386
 CPUDIR = i386
