@@ -22,7 +22,7 @@
 #elif defined(AT90S8515)
 #include "avr/at90s8515/trap.h"
 #elif defined(ATMEGA644P)
-#elif "avr/atmega644p/trap.h"
+#include "avr/atmega644p/trap.h"
 #elif defined(I386)
 #include "i386/trap.h"
 #else
