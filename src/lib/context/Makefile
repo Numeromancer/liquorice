@@ -26,7 +26,7 @@ all: libcontext-$(arch).a
 libcontext-$(arch).a: $(OBJS)
 	$(AR) $(ARFLAGS) libcontext-$(arch).a $(OBJS)
 
-install: libcontext.a
+install: libcontext-$(arch).a
 	$(INSTALL) libcontext-$(arch).a $(LIBDIR)/libcontext-$(arch).a
 
 clean:

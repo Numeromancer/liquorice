@@ -12,7 +12,7 @@ all: libethdev-$(arch).a
 libethdev-$(arch).a: $(OBJS)
 	$(AR) $(ARFLAGS) libethdev-$(arch).a $(OBJS)
 
-install: libethdev.a
+install: libethdev-$(arch).a
 	$(INSTALL) libethdev-$(arch).a $(LIBDIR)/libethdev-$(arch).a
 
 clean:

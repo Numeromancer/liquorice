@@ -12,7 +12,7 @@ all: libethernet_ip-$(arch).a
 libethernet_ip-$(arch).a: $(OBJS)
 	$(AR) $(ARFLAGS) libethernet_ip-$(arch).a $(OBJS)
 
-install: libethernet_ip.a
+install: libethernet_ip-$(arch).a
 	$(INSTALL) libethernet_ip-$(arch).a $(LIBDIR)/libethernet_ip-$(arch).a
 
 clean:
