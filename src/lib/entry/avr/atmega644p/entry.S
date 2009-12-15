@@ -1,176 +1,138 @@
-/*
- * entry/avr/atmega103/entry.S
- *	Entry point to the system and to any of the functions that might cause
- *	scheduler pre-emption to occur.
- *
- * Copyright (C) 2000 David J. Hudson <dave@humbug.demon.co.uk>
- *
- * This file is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.
- *
- * You can redistribute this file and/or modify it under the terms of the GNU
- * General Public License (GPL) as published by the Free Software Foundation;
- * either version 2 of the License, or (at your discretion) any later version.
- * See the accompanying file "copying-gpl.txt" for more details.
- *
- * As a special exception to the GPL, permission is granted for additional
- * uses of the text contained in this file.  See the accompanying file
- * "copying-liquorice.txt" for details.
- */
+/* Copyright (c) 2002, Marek Michalkiewicz <marekm@amelek.gda.pl>
+   Copyright (c) 2007, 2008 Eric B. Weddington
+   All rights reserved.
 
- 	.arch	atmega644p
-	.section	.init
-	.func	.start_of_init
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions are met:
 
-.start_of_init:
-	jmp	_start
-	jmp	_interrupt0_
-	jmp	_interrupt1_
-	jmp	_interrupt2_
-	jmp	_interrupt3_
-	jmp	_interrupt4_
-	jmp	_interrupt5_
-	jmp	_interrupt6_
-	jmp	_interrupt7_
-	jmp	_output_compare2_
-	jmp	_timer2_overflow_
-	jmp	_input_capture1_
-	jmp	_output_compare1a_
-	jmp	_output_compare1b_
-	jmp	_timer1_overflow_
-	jmp	_output_compare0_
-	jmp	_timer0_overflow_
-	jmp	_spi_
-	jmp	_uart_recv_
-	jmp	_uart_data_
-	jmp	_uart_trans_
-	jmp	_adc_
-	jmp	_eeprom_ready_
-	jmp	_comparator_
+   * Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
 
-/*
- * _start
- *	Initial code entry point from a CPU reset.
- */
-_start:
-	clr	r1			; Reset the flags
-	out	0x3f, r1
-	
-	ldi	r16, 0xc0		; Set for external RAM enabled and
-	out	0x35, r16		; a wait state
-	
-	ldi	r30, lo8(_etext)	; Load from the end of .text segment
-	ldi	r31, hi8(_etext)	; at it is the start of the .data image
-	ldi	r16, hh8(_etext)
-	ldi	r26, lo8(0x0060)	; Store from the start of RAM
-	ldi	r27, hi8(0x0060)
-	ldi	r28, lo8(_edata - 0x0060)
-					; Size of .data image - we assume that
-	ldi	r29, hi8(_edata - 0x0060)
-					; we have more than zero bytes to copy!
+   * Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in
+     the documentation and/or other materials provided with the
+     distribution.
 
-1:
-	out	0x3b, r16
-	lpm   
-	adiw	r30, 1
-	adc	r16, r1
-	st	X+, r0
-	sbiw	r28, 1
-	brne	1b
+   * Neither the name of the copyright holders nor the names of
+     contributors may be used to endorse or promote products derived
+     from this software without specific prior written permission.
 
-	ldi	r26, lo8(__bss_start)
-	ldi	r27, hi8(__bss_start)
-	ldi	r16, hi8(__bss_end)
-	rjmp	2f
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   POSSIBILITY OF SUCH DAMAGE. */
 
-.clr_bss:
-	st	X+, r1
+/* $Id$ */
 
-2:
-	cpi	r26, lo8(__bss_end)
-	cpc	r27, r16
-	brne	.clr_bss
+        .arch atmega644p
+        
+#if (__GNUC__ < 3) || (__GNUC__ == 3 && __GNUC_MINOR__ < 3)
+#error "GCC version >= 3.3 required"
+#endif
 
-	jmp	main
-	
+#define AVR_STATUS_ADDR             0x3F
+#define AVR_STACK_POINTER_HI_ADDR   0x3E
+#define AVR_STACK_POINTER_LO_ADDR   0x3D
+#define RAMEND                      0x10FF
+        
+#define __zero_reg__   r1
+
+        
+	.macro	vector name
+	.weak	\name
+	.set	\name, __bad_interrupt
+	jmp	\name
+	.endm
+
+	.section .vectors,"ax",@progbits
+	.global	__vectors
+	.func	__vectors
+__vectors:
+	jmp	__init
+	vector	__vector_1
+	vector	__vector_2
+	vector	__vector_3
+	vector	__vector_4
+	vector	__vector_5
+	vector	__vector_6
+	vector	__vector_7
+	vector	__vector_8
+	vector	__vector_9
+	vector	__vector_10
+	vector	__vector_11
+	vector	__vector_12
+	vector	__vector_13
+	vector	__vector_14
+	vector	__vector_15
+	vector	__vector_16
+	vector	__vector_17
+	vector	__vector_18
+	vector	__vector_19
+	vector	__vector_20
+	vector	__vector_21
+	vector	__vector_22
+	vector	__vector_23
+	vector	__vector_24
+	vector	__vector_25
+	vector	__vector_26
+	vector	__vector_27
+	vector	__vector_28
+	vector	__vector_29
+	vector	__vector_30
+	vector	__vector_31
 	.endfunc
-	
-.section .text
-	.func	.weaks			; Keep avr-as happy with -gstabs
-.weaks:
-	.weak	_interrupt0_
-	.weak	_interrupt1_
-	.weak	_interrupt2_
-	.weak	_interrupt3_
-	.weak	_interrupt4_
-	.weak	_interrupt5_
-	.weak	_interrupt6_
-	.weak	_interrupt7_
-	.weak	_output_compare2_
-	.weak	_timer2_overflow_
-	.weak	_input_capture1_
-	.weak	_output_compare1a_
-	.weak	_output_compare1b_
-	.weak	_timer1_overflow_
-	.weak	_output_compare0_
-	.weak	_timer0_overflow_
-	.weak	_spi_
-	.weak	_uart_recv_
-	.weak	_uart_data_
-	.weak	_uart_trans_
-	.weak	_adc_
-	.weak	_eeprom_ready_
-	.weak	_comparator_
 
-_interrupt0_:
-_interrupt1_:
-_interrupt2_:
-_interrupt3_:
-_interrupt4_:
-_interrupt5_:
-_interrupt6_:
-_interrupt7_:
-_output_compare2_:
-_timer2_overflow_:
-_input_capture1_:
-_output_compare1a_:
-_output_compare1b_:
-_timer1_overflow_:
-_output_compare0_:
-_timer0_overflow_:
-_spi_:
-_uart_recv_:
-_uart_data_:
-_uart_trans_:
-_adc_:
-_eeprom_ready_:
-_comparator_:
-_unexpected_:
-	ldi	r20, 0x55
-	out	24, r20
-1:
-	jmp	1b
+	/* Handle unexpected interrupts (enabled and no handler), which
+	   usually indicate a bug.  Jump to the __vector_default function
+	   if defined by the user, otherwise jump to the reset address.
 
-	.global	startup_continue
+	   This must be in a different section, otherwise the assembler
+	   will resolve "rjmp" offsets and there will be no relocs.  */
 
-startup_continue:
-	pop	r31
-	pop	r30
-	pop	r27
-	pop	r26
-	pop	r25
-	pop	r24
-	pop	r23
-	pop	r22
-	pop	r21
-	pop	r20
-	pop	r19
-	pop	r18
-	pop	r0
-	out	0x3b, r0
-	pop	r0
-	out	0x3f, r0
-	pop	r1
-	pop	r0
-	reti
+	.text
+	.global	__bad_interrupt
+	.func	__bad_interrupt
+__bad_interrupt:
+	.weak	__vector_default
+	.set	__vector_default, __vectors
+	jmp	__vector_default
+	.endfunc
+
+	.section .init0,"ax",@progbits
+	.weak	__init
+;	.func	__init
+__init:
+
+	.weak	__stack
+
+	/* By default, malloc() uses the current value of the stack pointer
+	   minus __malloc_margin as the highest available address.
+
+	   In some applications with external SRAM, the stack can be below
+	   the data section (in the internal SRAM - faster), and __heap_end
+	   should be set to the highest address available for malloc().  */
+	.weak	__heap_end
+	.set	__heap_end, 0
+
+	.section .init2,"ax",@progbits
+	clr	__zero_reg__
+	out	AVR_STATUS_ADDR, __zero_reg__
+	ldi	r28,lo8(__stack)
+	ldi	r29,hi8(__stack)
+	out	AVR_STACK_POINTER_HI_ADDR, r29
+	out	AVR_STACK_POINTER_LO_ADDR, r28
+
+	.set	__stack, RAMEND
+
+	.section .init9,"ax",@progbits
+	call	main
+	jmp	exit
+;	.endfunc
+
