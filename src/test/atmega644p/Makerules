@@ -1,0 +1,18 @@
+#
+# General rules.
+#
+
+%-$(arch).o: %.c
+	$(CC) $(CCFLAGS) -c -o $@ $<
+
+%-$(arch).s: %.c
+	$(CC) $(CCFLAGS) -c -S -o $@ $<
+
+%-$(arch).o: %.S
+	$(CC) -D__ASSEMBLY__ $(ASFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+.S.s:
+	$(CC) -D__ASSEMBLY__ $(CPPFLAGS) -E -o $@ $<
+
+%-$(arch).o: %.s
+	$(AS) $(ASFLAGS) -o $@ $<

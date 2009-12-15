@@ -1,0 +1,104 @@
+-------------
+Tests Details
+-------------
+
+This test configuration is designed to exercise the IP networking software in
+conjunction with an ATMega103 CPU.  It includes a number of test service
+threads, each of which can be "bound" to any suitable transport layer instance,
+and thus to any IP interface.  Simply change the initialization parameters
+passed to each one.
+
+Here's a quick summary of the test services (test 1 and 4 are not enabled by
+default - their thread initialization is currently commented out):
+
+	* Test 1 pings a remote host every 10 seconds (demonstrates
+	  sending to another network).
+
+	* Test 2 provides a UDP "echo" service on port 1234 of its
+	  bound interface.
+
+	* Test 3 provides an "echo" service on port 1235 of its bound
+	  interface.  After 10 data segments have arrived the thread
+	  will close the connection.  To try it out do something like:
+
+		telnet <addr> 1235
+	
+	* Test 4 acts as a TCP client.  It will attempt to connect to
+	  port 7 (echo service) of 192.168.0.205 when it starts and
+	  will then write 10 segments to the port once it is connected.
+	  The echo server will send them back and these will be
+	  displayed on the debug LCD.  This test is a good one for
+	  proving that retransmissions, etc, work correctly - pull the
+	  network cable out mid-transmission to see this happen.  When
+	  10 segments have been sent the client will close the
+	  connection.
+
+	* Test 5 is a multi-threaded web server on port 80 of its
+	  bound interface.
+
+	* Test 6 is a multi-threaded debug service on port 1237 of its
+	  bound interface.  Please ensure that your telnet
+	  implementation is put into character mode rather than line
+	  mode if you're running under Linux (Windows 95 and NT 4.0 do
+	  this by default):
+
+		telnet <addr> 1237
+
+
+------------------
+Supported Hardware
+------------------
+
+It's unlikely that this software will work unless it's tweaked for your target
+hardware environment.  This release supports the three different setups that I
+use at the moment.  To use one or another change the commenting of the line
+MDEFS= in the main "Makefile".
+
+The first board (STK300) is a standard STK300 board from Kanda Systems, but
+with a 32 kByte SRAM (fitted in the memory expansion socket, along with a
+74HC573) at 0x1000 - 0x7fff and a standard 16x2 LCD (attached to the LCD
+expansion header) at 0x8000 and 0xc000.
+
+The second board (DJH300) is an STK300 with a 32 kByte SRAM mapped at
+0x1000 - 0x7fff, a 16x2 LCD mapped at 0xc000 - 0xc001 and an ISA bus mapped at
+0x8000 - 0xbf00.  I run this with a 3C509B Ethernet card at ISA I/O address
+0x0300.
+
+The third board (DJHNE) is the same as the second except with an NE2000
+Ethernet card instead of a 3C509.
+
+The fourth board (PCB520) has a 32 kByte SRAM mapped at 0x1000 - 0x7fff, an
+SMC 91C96 Ethernet chip mapped at 0x8000 - 0x800f and a 16x2 LCD mapped at
+0xa000 - 0xa001.
+
+If there are other standard platforms that anyone would like to see supported
+then I'll be happy to incorporate any necessary diffs.
+
+I/O specific stuff is generally isolated into a few inlined function is a
+header file (usually in the appropriate "arch" directory).  These can be
+changed to suit I/O requirements.
+
+Some of the debug support assumes the presence of the 16x2 LCD and of a single
+push button on port D bit 0.  The push button can be used to sequence between
+debug display pages when things go seriously wrong and the code stops running.
+
+The bit-banged I2C implementation uses port D bit 6 for SCL and port D bit 7
+for SDA.  Both of these lines should have something like a 4k7 pull-up resistor
+(to VCC) in order to let this code work.  The reason for the pull-up is that
+this allows the pins to be pulled high and driven low, simply by switching the
+port direction via the data direction register.
+	
+
+-----------------
+Building The Code
+-----------------
+
+The code has been built and tested under Linux using avr-gcc v2.95.2 and a
+fairly standard set of GNU utilities.  I don't believe there's anything too
+obscure in any of it.  I haven't switched any of the assembly code to Denis'
+new convention where "r15" would simply become "15" - I don't know if my code
+breaks when this happens, but I'd be interested in any feedback.
+
+To build the code, ensure that the "atmega103" libraries have been built and
+intalled in the "lib" directory, modify the Makefile in this directory to
+support your hardware platform, and run "make".
