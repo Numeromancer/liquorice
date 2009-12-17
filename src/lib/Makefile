@@ -26,7 +26,8 @@ SUBDIRS = condvar \
 	slip \
 	tcp \
 	thread \
-	udp
+	udp \
+	ldscripts
 
 all: dummy
 	for i in $(SUBDIRS); do $(MAKE) -C $$i all; done
@@ -96,6 +97,9 @@ thread: dummy
 
 udp: dummy
 	$(MAKE) -C udp all
+
+ldscripts: dummy
+	$(MAKE) -c ldscripts all
 
 install: all
 	for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
