@@ -29,7 +29,6 @@
 struct context_enter_frame {
 	u8_t cef_r25;
 	u8_t cef_r24;
-	u8_t cef_rampz;
 	u8_t cef_sreg;
 	u8_t cef_r1;
 	u8_t cef_pchi;
@@ -48,7 +47,6 @@ extern inline void context_enter_frame_build(struct context_enter_frame *cef, vo
 	cef->cef_pchi = (unsigned char)((((addr_t)fn) >> 8) & 0xff);
 	cef->cef_pclo = (unsigned char)(((addr_t)fn) & 0xff);
 	cef->cef_sreg = 0x80;
-	cef->cef_rampz = 0x00;
 	cef->cef_r1 = 0x00;
 	cef->cef_r24 = (u8_t)(((u16_t)arg) & 0xff);
 	cef->cef_r25 = (u8_t)(((u16_t)arg) >> 8);

@@ -31,8 +31,6 @@ context_enter:
 	pop	r25
 	pop	r24
 	pop	r0
-	out	0x3b, r0
-	pop	r0
 	out	0x3f, r0
 	pop	r1
 	reti
