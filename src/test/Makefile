@@ -4,13 +4,17 @@
 
 SUBDIRS = mega103 \
 	pc386 \
-	stk200
+	stk200 \
+	atmega644p
 
 all: dummy
 	for i in $(SUBDIRS); do $(MAKE) -C $$i all; done
 
 mega103: dummy
 	$(MAKE) -C mega103 all
+
+atmega644p: dummy
+	$(MAKE) -C atmega644p all
 
 pc386: dummy
 	$(MAKE) -C pc386 all
@@ -20,7 +24,7 @@ stk200: dummy
 
 clean: dummy
 	for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
-	
+
 clobber: dummy
 	for i in $(SUBDIRS); do $(MAKE) -C $$i clobber; done
 
