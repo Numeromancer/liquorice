@@ -18,7 +18,7 @@
  */
 
 #if defined(ATMEGA103) || defined(AT90S8515) || defined(ATMEGA644P)
-#include "avr/io.h"
+#include "avr/avrio.h"
 #elif defined(I386)
 #include "i386/io.h"
 #else
