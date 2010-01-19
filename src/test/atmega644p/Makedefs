@@ -1,4 +1,4 @@
-#
+# -*- Makefile -*-
 # Path for the root directory of this Liquorice installation.
 #
 
@@ -10,17 +10,17 @@ LIQDIR = /home/tschaeffer/workspace/git/liquorice
 #
 
 
-arch=atmega103
+arch=atmega644p
 ARCHDIR = avr
-CPUDIR = avr/atmega103
-MASFLAGS = -mmcu=atmega103
-MCCFLAGS = -mmcu=atmega103
+CPUDIR = avr/atmega644p
+MASFLAGS = -mmcu=atmega644p
+MCCFLAGS = -mmcu=atmega644p
 TARGET_PREF = avr-
 
-#MDEFS = -DATMEGA103 -DPCB520 -Isrv
-#MDEFS = -DATMEGA103 -DSTK300 -Isrv
-MDEFS = -DATMEGA103 -DDJH300 -Isrv
-#MDEFS = -DATMEGA103 -DDJHNE -Isrv
+#MDEFS = -DATMEGA644P -DPCB520 -Isrv
+#MDEFS = -DATMEGA644P -DSTK300 -Isrv
+MDEFS = -DATMEGA644P -Isrv
+#MDEFS = -DATMEGA644P -DDJHNE -Isrv
 
 #
 # Compilation details.
@@ -36,7 +36,7 @@ CPP = $(CC) -E $(DEFS)
 CPPFLAGS = $(DEFS)
 DEFS = $(MDEFS) -I$(LIQDIR)/include
 LD = $(TARGET_PREF)gcc
-LDFLAGS = -Wl,-trace -mmcu=atmega103
+LDFLAGS = -Wl,-trace -mmcu=atmega644p -nostartfiles -Wl,--script,$(LIBDIR)/atmega644p.ld
 NM = $(TARGET_PREF)nm
 OBJCOPY = $(TARGET_PREF)objcopy
 STRIP = $(TARGET_PREF)strip

@@ -1,4 +1,4 @@
-#
+# -*- Makefile -*-
 # General rules.
 #
 
@@ -7,6 +7,9 @@
 
 %-$(arch).s: %.c
 	$(CC) $(CCFLAGS) -c -S -o $@ $<
+
+%.i: %.c
+	$(CC) $(CCFLAGS) -c $< -E > $@
 
 %-$(arch).o: %.S
 	$(CC) -D__ASSEMBLY__ $(ASFLAGS) $(CPPFLAGS) -c -o $@ $<

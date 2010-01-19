@@ -5,7 +5,7 @@
 include Makedefs
 include Makerules
 
-LIBDIR = ../../../lib/avr/atmega103
+LIBDIR = ../../../lib/avr/atmega644p
 
 SUBDIRS = debug srv
 
@@ -31,6 +31,8 @@ liquorice_libs= libtcp-$(arch).a libudp-$(arch).a libip-$(arch).a libipcsum-$(ar
  libheap-$(arch).a libcontext-$(arch).a \
  libdebug-$(arch).a libsrv-$(arch).a 
 
+TARGET_LDFLAGS=
+
 LIB_LDFLAGS=$(patsubst lib%.a,-l%,$(liquorice_libs))
 #
 # Note that "entry.o" *MUST* be the first object in object file list as it
@@ -39,10 +41,11 @@ LIB_LDFLAGS=$(patsubst lib%.a,-l%,$(liquorice_libs))
 #
 liquorice.elf: dummy $(OBJS)
 	for i in $(SUBDIRS); do $(MAKE) -C $$i all; done
-	$(LD) $(LDFLAGS) $(LIBDIR)/entry-$(arch).o main-$(arch).o \
+	$(LD) $(LIBDIR)/entry-$(arch).o main-$(arch).o \
        -L/usr/avr/lib -Ldebug -Lsrv -L$(LIBDIR) \
        $(LIB_LDFLAGS) -lm -lc \
-       -o liquorice.elf
+       -o liquorice.elf \
+       $(TARGET_LDFLAGS) $(LDFLAGS)
 
 reset:
 	uisp -dstk200
