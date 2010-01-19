@@ -24,66 +24,27 @@
  * Wherever possible we use the Atmel datasheet's naming.
  */
 
+#include <avr/interrupt.h>
+
 #define PINF 0x00			/* Port F input pins */
 #define PINE 0x01			/* Port E input pins */
 #define DDRE 0x02			/* Port E data direction register */
 #define PORTE 0x03			/* Port E data register */
-#define ADCL 0x04			/* ADC data register (low) */
-#define ADCH 0x05			/* ADC data register (high) */
 #define ADCSR 0x06			/* ADC control and status register */
-#define ADMUX 0x07			/* ADC multiplexer select register */
-#define ACSR 0x08			/* Analog comparator control and status register */
 #define UBRR 0x09			/* UART baud rate register */
 #define UCR 0x0a			/* UART control register */
 #define USR 0x0b			/* UART status register */
 #define UDR 0x0c			/* UART I/O data register */
-#define SPCR 0x0d			/* SPI control register */
-#define SPSR 0x0e			/* SPI status register */
-#define SPDR 0x0f			/* SPI data register */
-#define PIND 0x10			/* Port D input pins */
-#define DDRD 0x11			/* Port D data direction register */
-#define PORTD 0x12			/* Port D data register */
-#define PORTC 0x15			/* Port C data register */
-#define PINB 0x16			/* Port B input pins */
-#define DDRB 0x17			/* Port B data direction register */
-#define PORTB 0x18			/* Port B data register */
-#define PINA 0x19			/* Port A input pins */
-#define DDRA 0x1a			/* Port A data direction register */
-#define PORTA 0x1b			/* Port A data register */
-#define EECR 0x1c			/* EEPROM control register */
-#define EEDR 0x1d			/* EEPROM data register */
-#define EEARL 0x1e			/* EEPROM address register (low) */
-#define EEARH 0x1f			/* EEPROM address register (high) */
 #define WDTCR 0x21			/* Watchdog timer control register */
 #define OCR2 0x23			/* Timer/counter2 output compare register */
-#define TCNT2 0x24			/* Timer/counter2 counter register */
 #define TCCR2 0x25			/* Timer/counter2 control register */
-#define ICR1L 0x26			/* Timer/counter1 input capture register (low) */
-#define ICR1H 0x27			/* Timer/counter1 input capture register (high) */
-#define OCR1BL 0x28			/* Timer/counter1 output compare register B (low) */
-#define OCR1BH 0x29			/* Timer/counter1 output compare register B (high) */
-#define OCR1AL 0x2a			/* Timer/counter1 output compare register A (low) */
-#define OCR1AH 0x2b			/* Timer/counter1 output compare register A (high) */
-#define TCNT1L 0x2c			/* Timer/counter1 counter register (low) */
-#define TCNT1H 0x2d			/* Timer/counter1 counter register (high) */
-#define TCCR1B 0x2e			/* Timer/counter1 control register B */
-#define TCCR1A 0x2f			/* Timer/counter1 control register A */
-#define ASSR 0x30			/* Asynchronous status register */
 #define OCR0 0x31			/* Timer/counter0 output compare register */
-#define TCNT0 0x32			/* Timer/counter0 counter register */
 #define TCCR0 0x33			/* Timer/counter0 control register */
-#define MCUSR 0x34			/* MCU status register */
-#define MCUCR 0x35			/* MCU control register */
 #define TIFR 0x36			/* Timer/counter interrupt flag register */
 #define TIMSK 0x37			/* Timer/counter interrupt mask register */
-#define EIFR 0x38			/* External interrupt flag register */
-#define EIMSK 0x39			/* External interrupt mask register */
 #define EICR 0x3a			/* External interrupt control register */
 #define RAMPZ 0x3b			/* RAM page Z select register */
 #define XDIV 0x3c			/* XTAL divide control register */
-#define SPL 0x3d			/* Stack pointer (low) */
-#define SPH 0x3e			/* Stack pointer (high) */
-#define SREG 0x3f			/* Status register */
 
 /*
  * Port F input pins.
@@ -398,9 +359,7 @@
 /*
  * MCU control register.
  */
-#define SM0 3
-#define SM1 4
-#define SE 5
+
 #define SRW 6
 #define SRE 7
 
@@ -409,23 +368,14 @@
  */
 #define TOV0 0
 #define OCF0 1
-#define TOV1 2
-#define OCF1B 3
-#define OCF1A 4
 #define ICF1 5
-#define TOV2 6
 #define OCF2 7
 
 /*
  * Timer/counter interrupt mask register.
  */
-#define TOIE0 0
 #define OCIE0 1
-#define TOIE1 2
-#define OCIE1B 3
-#define OCIE1A 4
 #define TICIE1 5
-#define TOIE2 6
 #define OCIE2 7
 
 /*
@@ -491,11 +441,7 @@
  * Constants.
  */
 #define RAMSTART 0x0060			/* First on-chip SRAM address */
-#define RAMEND 0x0FFF			/* Last on-chip SRAM address */
 #define XRAMSTART 0x1000		/* First off-chip SRAM address */
-#define XRAMEND 0xFFFF			/* Last off-chip SRAM address */
-#define E2END 0x0FFF			/* Last EEPROM address */
-#define FLASHEND 0x1FFFF		/* Last code-space address */
  
 /*
  * get_stack_pointer()
