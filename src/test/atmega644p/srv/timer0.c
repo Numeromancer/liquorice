@@ -17,6 +17,9 @@
  * uses of the text contained in this file.  See the accompanying file
  * "copying-liquorice.txt" for details.
  */
+
+#include <avr/io.h>
+
 #include "types.h"
 #include "cpu.h"
 #include "io.h"
@@ -77,10 +80,9 @@ void timer0_overflow_isr(void)
 }
 
 /*
- * _timer0_overflow_()
+ * timer0 overflow
  */
-void _timer0_overflow_(void) __attribute__ ((naked));
-void _timer0_overflow_(void)
+ISR(TIMER0_OVF_vect)
 {
 	timer0_overflow_isr();
 }
@@ -102,11 +104,11 @@ void timer0_overflow_thread(void *arg)
 	/*
 	 * Allow timer 0 to tick (well enable interrupts from it anyway).
 	 */
-	out8(TIMSK, BV(TOIE0));
+	TIMSK0 = BV(TOIE0);
 
 	while (1) {
-                u8_t runnable;
-                u16_t ticks;
+        u8_t runnable;
+        u16_t ticks;
                                                 						
 		debug_set_lights(0x0c);
 
