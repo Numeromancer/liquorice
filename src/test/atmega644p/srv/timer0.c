@@ -58,7 +58,7 @@ void timer0_overflow_isr(void)
 	/*
 	 * Ensure that we run again.
 	 */
-	out8(TCNT0, 100);
+	TCNT0 = 100;
 
 	isr_ticks++;
 
@@ -82,31 +82,7 @@ void timer0_overflow_isr(void)
 void _timer0_overflow_(void) __attribute__ ((naked));
 void _timer0_overflow_(void)
 {
-	asm volatile ("push r0\n\t"
-			"push r1\n\t"
-			"in r0, 0x3f\n\t"
-			"push r0\n\t"
-#ifdef ATMEGA103
-			"in r0, 0x3b\n\t"
-			"push r0\n\t"
-#endif
-			"push r18\n\t"
-			"push r19\n\t"
-			"push r20\n\t"
-			"push r21\n\t"
-			"push r22\n\t"
-			"push r23\n\t"
-			"push r24\n\t"
-			"push r25\n\t"
-			"push r26\n\t"
-			"push r27\n\t"
-			"push r30\n\t"
-			"push r31\n\t"
-			::);
-
 	timer0_overflow_isr();
-
-	asm volatile ("jmp startup_continue\n\t" ::);
 }
 
 /*
@@ -192,8 +168,8 @@ void timer0_overflow_thread(void *arg)
  */
 void timer_init(void)
 {
-	out8(TCCR0, 6);
-	out8(TCNT0, 100);
+	TCCR0A = 6;
+	TCNT0 = 100;
 
 	spinlock_init(&timer0_lock, 0x12);
 	spinlock_init(&timer0_isr_lock, 0x00);

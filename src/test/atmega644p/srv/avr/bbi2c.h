@@ -32,13 +32,7 @@ extern void bbi2c_long_delay(void);
 extern inline void bbi2c_write_sda(u8_t v)
 {
 	if (v) {
-		asm volatile ("cbi %0, 7\n\t"
-			: /* No outputs */
-			: "I" (DDRD));
 	} else {
-		asm volatile ("sbi %0, 7\n\t"
-			: /* No outputs */
-			: "I" (DDRD));
 	}
 }
 
@@ -52,7 +46,7 @@ extern inline void bbi2c_write_sda(u8_t v)
  */
 extern inline u8_t bbi2c_read_sda(void)
 {
-	return (in8(PIND) & (1 << 7));
+	return (PIND & (1 << 7));
 }
 
 /*
@@ -66,12 +60,6 @@ extern inline u8_t bbi2c_read_sda(void)
 extern inline void bbi2c_write_scl(u8_t v)
 {
 	if (v) {
-		asm volatile ("cbi %0, 6\n\t"
-			: /* No outputs */
-			: "I" (DDRD));
 	} else {
-		asm volatile ("sbi %0, 6\n\t"
-			: /* No outputs */
-			: "I" (DDRD));
 	}
 }

@@ -17,6 +17,8 @@
  * uses of the text contained in this file.  See the accompanying file
  * "copying-liquorice.txt" for details.
  */
+#include <avr/interrupt.h>
+
 #include "types.h"
 #include "cpu.h"
 #include "io.h"
@@ -35,9 +37,6 @@
 #include "uart.h"
 #include "ppp_ahdlc.h"
 #include "ethdev.h"
-#include "3c509.h"
-#include "ne2000.h"
-#include "smc91c96.h"
 #include "ip_datalink.h"
 #include "slip.h"
 #include "ppp.h"
@@ -72,38 +71,15 @@ extern void *__bss_end;
 void _interrupt2_(void) __attribute__ ((naked));
 void _interrupt2_(void)
 {
-	asm volatile ("push r0\n\t"
-			"push r1\n\t"
-			"in r0, 0x3f\n\t"
-			"push r0\n\t"
-#ifdef ATMEGA103
-			"in r0, 0x3b\n\t"
-			"push r0\n\t"
-#endif
-			"push r18\n\t"
-			"push r19\n\t"
-			"push r20\n\t"
-			"push r21\n\t"
-			"push r22\n\t"
-			"push r23\n\t"
-			"push r24\n\t"
-			"push r25\n\t"
-			"push r26\n\t"
-			"push r27\n\t"
-			"push r30\n\t"
-			"push r31\n\t"
-			::);
-
 	while (1) {
 		debug_print_pstr("\fint ctrl:");
-		debug_print8(in8(EIFR));
-		debug_print8(in8(EIMSK));
-		debug_print8(in8(EICR));
+		debug_print8(EIFR);
+		debug_print8(EIMSK);
+		debug_print8(EICRA);
 		debug_wait_button();
 		debug_stack_trace();
 	}
 
-	asm volatile ("jmp startup_continue\n\t" ::);
 }
 #endif
 #endif
@@ -1186,11 +1162,10 @@ void init(void)
  */
 int main(void)
 {
-	out8(DDRA, 0xff);
-	out8(DDRB, 0xff);
-	out8(DDRE, 0x20);
-	out8(DDRD, 0xff);
-	out8(EICR, 0x00);
+	DDRA = 0xff;
+	DDRB = 0xff;
+	DDRD = 0xff;
+	EICRA = 0x00;
 	
 	/*
 	 * Provide debugging capabilities before we attempt anything else.

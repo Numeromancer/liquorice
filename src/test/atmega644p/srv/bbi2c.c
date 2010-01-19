@@ -25,7 +25,7 @@
 #include "context.h"
 #include "bbi2c.h"
 
-#if defined(ATMEGA103) || defined(AT90S8515)
+#if defined(ATMEGA103) || defined(AT90S8515) || defined(ATMEGA644P)
 #include "avr/bbi2c.h"
 #else
 #error "no valid architecture found"

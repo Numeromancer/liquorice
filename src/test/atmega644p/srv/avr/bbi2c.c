@@ -51,6 +51,6 @@ void bbi2c_init(void)
 	 * Initialize our SDA and SCL pins.  Set them to be inputs and tri-stated
 	 * which in effect means pull them high!
 	 */
-        out8(PORTD, in8(PORTD) & 0x3f);
-        out8(DDRD, in8(DDRD) & 0x3f);
+        PORTD = PORTD & 0x3f;
+        DDRD = DDRD & 0x3f;
 }

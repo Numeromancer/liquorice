@@ -16,6 +16,9 @@
  * uses of the text contained in this file.  See the accompanying file
  * "copying-liquorice.txt" for details.
  */
+
+#include <avr/interrupt.h>
+
 #include "types.h"
 #include "cpu.h"
 #include "io.h"
@@ -80,7 +83,6 @@ void uart_recv_isr(void)
 }
 
 /*
- * _uart_recv_()
  *	Interrupt service routine.
  *
  * As a rule of thumb we try and avoid doing any processing in hardware ISRs
@@ -90,34 +92,9 @@ void uart_recv_isr(void)
  * As UART receive operations are fast then we make an exception and provide
  * a very small receive FIFO.
  */
-void _uart_recv_(void) __attribute__ ((naked));
-void _uart_recv_(void)
+ISR(USART0_RX_vect)
 {
-	asm volatile ("push r0\n\t"
-			"push r1\n\t"
-			"in r0, 0x3f\n\t"
-			"push r0\n\t"
-#ifdef ATMEGA103
-			"in r0, 0x3b\n\t"
-			"push r0\n\t"
-#endif
-			"push r18\n\t"
-			"push r19\n\t"
-			"push r20\n\t"
-			"push r21\n\t"
-			"push r22\n\t"
-			"push r23\n\t"
-			"push r24\n\t"
-			"push r25\n\t"
-			"push r26\n\t"
-			"push r27\n\t"
-			"push r30\n\t"
-			"push r31\n\t"
-			::);
-
 	uart_recv_isr();
-				
-	asm volatile ("jmp startup_continue\n\t" ::);
 }
 
 /*
@@ -189,34 +166,10 @@ void uart_data_isr(void)
 /*
  * _uart_data_()
  */
-void _uart_data_(void) __attribute__ ((naked));
-void _uart_data_(void)
+
+ISR(USART0_UDRE_vect)
 {
-	asm volatile ("push r0\n\t"
-			"push r1\n\t"
-			"in r0, 0x3f\n\t"
-			"push r0\n\t"
-#ifdef ATMEGA103
-			"in r0, 0x3b\n\t"
-			"push r0\n\t"
-#endif
-			"push r18\n\t"
-			"push r19\n\t"
-			"push r20\n\t"
-			"push r21\n\t"
-			"push r22\n\t"
-			"push r23\n\t"
-			"push r24\n\t"
-			"push r25\n\t"
-			"push r26\n\t"
-			"push r27\n\t"
-			"push r30\n\t"
-			"push r31\n\t"
-			::);
-
 	uart_data_isr();
-
-	asm volatile ("jmp startup_continue\n\t" ::);
 }
 
 /*
