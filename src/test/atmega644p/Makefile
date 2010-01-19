@@ -11,7 +11,7 @@ SUBDIRS = debug srv
 
 OBJS = main-$(arch).o
 
-all: liquorice.srec
+all: liquorice.elf
 
 debug: dummy
 	$(MAKE) -C debug all
